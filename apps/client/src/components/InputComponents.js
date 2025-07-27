@@ -2,28 +2,36 @@ import React from "react";
 
 export const TextInput = ({ placeholder, value, onChange, type = "text" }) => {
   return (
-    <div style={{ width: '312px', height: '50px', display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '12px', gap: '8px', border: '1px solid #B1B1B1', background: '#fff', boxSizing: 'border-box', margin: '0 auto', borderRadius: '8px' }}>
+    <div style={{
+      boxSizing: 'border-box',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: '10px 8px',
+      width: '320px',
+      height: '48px',
+      border: '1px solid #b1b1b1',
+      backgroundColor: 'white',
+    }}>
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         style={{
-          width: '288px',
-          height: '17px',
           fontFamily: 'Manrope, sans-serif',
           fontStyle: 'normal',
           fontWeight: 500,
           fontSize: '14px',
-          lineHeight: '120%',
-          color: '#000',
+          lineHeight: '17px',
+          textAlign: 'left',
+          color: '#717171',
           border: 'none',
           outline: 'none',
+          width: '100%',
           background: 'transparent',
-          padding: 0,
-          margin: 0,
         }}
-        className="placeholder:text-[#B0B0B0]"
+        className="placeholder:text-[#717171]"
       />
     </div>
   );
