@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { trainerLogin } from "../services/api";
 import styled from "styled-components";
+import { PrimaryButton } from "../components/Button";
+import { TextInput } from "../components/InputComponents";
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -53,45 +55,11 @@ const LoginCard = styled.div`
   right: 0;
   background: white;
   border-radius: 20px 20px 0 0;
-  padding: 40px 20px;
+  padding: 40px 24px 32px 24px;
   min-height: 50vh;
-`;
-
-const InputField = styled.input`
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: "Manrope", sans-serif;
-  
-  &:focus {
-    outline: none;
-    border-color: #FA403F;
-  }
-`;
-
-const LoginButton = styled.button`
-  width: 100%;
-  background: #FA403F;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: "Manrope", sans-serif;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  margin-bottom: 20px;
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+  flex-direction: column;
+  align-items: stretch;
 `;
 
 const ContactText = styled.div`
@@ -155,27 +123,26 @@ const TrainerLogin = ({ role = "trainer" }) => {
       </BackgroundText>
       
       <LoginCard>
-        <InputField
-          type="email"
+        <TextInput
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          onFocus={() => setError("")}
+          type="text"
         />
-        <InputField
-          type="password"
+        <TextInput
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          onFocus={() => setError("")}
+          type="password"
         />
-        
         {error && <ErrorText>{error}</ErrorText>}
-        
-        <LoginButton onClick={handleLogin} disabled={loading}>
-          <span>LOGIN</span>
-          <span>→</span>
-        </LoginButton>
+        <div style={{ width: '100%', marginBottom: 24 }}>
+          <PrimaryButton
+            label={loading ? "LOGGING IN..." : "LOGIN"}
+            onClick={handleLogin}
+            disabled={loading}
+          />
+        </div>
         
         <ContactText>
           Don't have an account?<br />

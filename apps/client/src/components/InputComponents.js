@@ -1,23 +1,16 @@
 import React from "react";
 
-export const TextInput = ({ label, placeholder, value, onChange }) => {
+export const TextInput = ({ label, placeholder, value, onChange, type = "text" }) => {
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label}
-      </label>
+    <div className="mb-6 w-full">
       <input
-        type="text"
+        type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="block w-[320px] h-[48px] border border-[#B1B1B1] px-4 py-2 rounded-none"
+        className="w-full h-14 border border-[#B1B1B1] px-4 bg-white text-base placeholder:text-[#b1b1b1] placeholder:text-lg focus:outline-none focus:border-[#FA403F]"
         style={{
           boxSizing: "border-box",
-          flex: "none",
-          order: 0,
-          alignSelf: "stretch",
-          flexGrow: 0,
         }}
       />
     </div>
