@@ -1,80 +1,180 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { trainerLogin } from "../services/api";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { PrimaryButton } from "../components/Button";
 import { TextInput } from "../components/InputComponents";
 
-const LoginContainer = styled.div`
-  min-height: 100vh;
-  background: linear-gradient(180deg, #3a3a3a 0%, #252525 100%);
+const GlobalFonts = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Racing+Sans+One&family=Roboto+Flex:ital,wght@1,900&display=swap');
+`;
+
+const BlurredBg = styled.div`
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background: url('/image.png') center center / cover no-repeat;
+  filter: blur(16px) brightness(0.8);
+`;
+
+const CenteredWrapper = styled.div`
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  overflow: auto;
+`;
+
+const MobileContainer = styled.div`
   position: relative;
+  width: 360px;
+  min-height: 100vh;
+  background: transparent;
+  overflow-y: auto;
+  box-shadow: 0 0 32px 0 rgba(0,0,0,0.10);
   display: flex;
   flex-direction: column;
 `;
 
 const BackgroundImage = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50vh;
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23333"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="white" font-size="8">FIGHTER</text></svg>');
+  width: 632px;
+  height: 948px;
+  left: -136px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: url('/image.png');
   background-size: cover;
   background-position: center;
-  opacity: 0.8;
+  z-index: 0;
 `;
 
-const BrandText = styled.div`
+const LogoBar = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 27px 20px;
+  gap: 10px;
   position: absolute;
-  top: 20px;
-  left: 20px;
-  font-family: "Manrope", sans-serif;
-  font-weight: 700;
+  width: 360px;
+  height: 80px;
+  left: 0;
+  top: 0;
+  z-index: 2;
+`;
+
+const LogoText = styled.div`
+  font-family: 'Racing Sans One', sans-serif;
+  font-style: normal;
+  font-weight: 400;
   font-size: 24px;
-  color: white;
+  line-height: 30px;
+  color: #B0B0B0;
+`;
+
+const TrainText = styled.div`
+  position: absolute;
+  width: 286px;
+  height: 97px;
+  left: -8px;
+  top: 356px;
+  font-family: 'Roboto Flex', sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 88px;
+  line-height: 110%;
+  letter-spacing: 0.08em;
+  color: rgba(39, 39, 39, 0.6);
+  -webkit-text-stroke: 2.7px #fff;
   z-index: 2;
 `;
 
-const BackgroundText = styled.div`
+const EarnText = styled.div`
   position: absolute;
-  top: 30%;
-  left: 20px;
+  width: 247px;
+  height: 97px;
+  right: -8px;
+  top: 428px;
+  font-family: 'Roboto Flex', sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 88px;
+  line-height: 110%;
+  letter-spacing: 0.08em;
+  color: #D62422;
   z-index: 2;
-  color: white;
-  font-family: "Manrope", sans-serif;
-  font-weight: 700;
-  font-size: 48px;
-  line-height: 1;
 `;
 
 const LoginCard = styled.div`
   position: absolute;
-  bottom: 0;
   left: 0;
-  right: 0;
-  background: white;
+  bottom: 0;
+  width: 360px;
+  height: 295px;
+  background: #fff;
+  box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
   border-radius: 20px 20px 0 0;
-  padding: 40px 24px 32px 24px;
-  min-height: 50vh;
+  padding: 24px 24px 28px 24px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
+  z-index: 3;
 `;
 
-const ContactText = styled.div`
-  text-align: center;
-  font-family: "Manrope", sans-serif;
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
+const LoginContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 312px;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  width: 312px;
 `;
 
 const ErrorText = styled.div`
   color: #FA403F;
   font-size: 14px;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   text-align: center;
+`;
+
+const Links = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 221px;
+  margin: 0 auto;
+`;
+const LinkNote = styled.div`
+  font-family: 'Manrope', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  color: #717171;
+  text-align: center;
+`;
+const LinkAction = styled.div`
+  font-family: 'Manrope', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 120%;
+  color: #000;
+  text-align: center;
+  cursor: pointer;
 `;
 
 const TrainerLogin = ({ role = "trainer" }) => {
@@ -84,23 +184,19 @@ const TrainerLogin = ({ role = "trainer" }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     if (!email || !password) {
       setError("Please enter both email and password");
       return;
     }
-
     setLoading(true);
     setError("");
-    
     try {
       const response = await trainerLogin(email, password);
-      console.log("Trainer login successful:", response);
-      // Save accessToken and userRole to localStorage
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("userRole", "trainer");
       setLoading(false);
-      // Navigate to trainer dashboard with role-based routing
       navigate("/trainer/dashboard");
     } catch (error) {
       setError("Invalid email or password");
@@ -109,52 +205,56 @@ const TrainerLogin = ({ role = "trainer" }) => {
   };
 
   const handleContactUs = () => {
-    // Navigate to contact page or open email
     alert("Contact us at support@maf.com to sign up as a trainer");
   };
 
   return (
-    <LoginContainer>
-      <BackgroundImage />
-      <BrandText>MAF</BrandText>
-      <BackgroundText>
-        TRAIN<br />
-        EARN
-      </BackgroundText>
-      
-      <LoginCard>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="text"
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-        />
-        {error && <ErrorText>{error}</ErrorText>}
-        <div style={{ width: '100%', marginBottom: 24 }}>
-          <PrimaryButton
-            label={loading ? "LOGGING IN..." : "LOGIN"}
-            onClick={handleLogin}
-            disabled={loading}
-          />
-        </div>
-        
-        <ContactText>
-          Don't have an account?<br />
-          <span 
-            style={{ color: '#FA403F', cursor: 'pointer' }}
-            onClick={handleContactUs}
-          >
-            Contact us to Sign Up as a Trainer
-          </span>
-        </ContactText>
-      </LoginCard>
-    </LoginContainer>
+    <>
+      <GlobalFonts />
+      <BlurredBg />
+      <CenteredWrapper>
+        <MobileContainer>
+          <BackgroundImage />
+          <LogoBar>
+            <LogoText>MAF</LogoText>
+          </LogoBar>
+          <TrainText>TRAIN</TrainText>
+          <EarnText>EARN</EarnText>
+          <LoginCard>
+            <LoginContent>
+              <Form onSubmit={handleLogin}>
+                <TextInput
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                />
+                <TextInput
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                />
+                {error && <ErrorText>{error}</ErrorText>}
+                <div style={{ width: '100%' }}>
+                  <PrimaryButton
+                    label={loading ? "LOGGING IN..." : "LOGIN"}
+                    onClick={handleLogin}
+                    disabled={loading}
+                  />
+                </div>
+              </Form>
+              <Links>
+                <LinkNote>Don’t have an account?</LinkNote>
+                <LinkAction onClick={handleContactUs}>
+                  Contact us to Sign Up as a Trainer
+                </LinkAction>
+              </Links>
+            </LoginContent>
+          </LoginCard>
+        </MobileContainer>
+      </CenteredWrapper>
+    </>
   );
 };
 
