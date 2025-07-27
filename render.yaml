@@ -1,0 +1,25 @@
+services:
+  # Backend API Service
+  - type: web
+    name: maf-backend
+    env: node
+    plan: free
+    buildCommand: cd apps/server && npm install
+    startCommand: cd apps/server && npm start
+    healthCheckPath: /api/ping
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+
+  # Frontend Static Site
+  - type: web
+    name: maf-frontend
+    env: static
+    plan: free
+    buildCommand: cd apps/client && npm install && npm run build
+    staticPublishPath: apps/client/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://maf-backend.onrender.com 

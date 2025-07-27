@@ -1,6 +1,92 @@
-# MAF Trainer-Student App
+# Trainer-Student App for MAF
 
-A unified React application that combines both Trainer and Student interfaces for the MAF (Martial Arts Fitness) platform.
+Unified Trainer and Student App for Martial Arts Federation
+
+## 🚀 Quick Deployment Guide
+
+### Free Deployment Options
+
+This project can be deployed for free using the following services:
+
+#### Frontend (React) - Vercel
+1. **Sign up** at [vercel.com](https://vercel.com)
+2. **Connect your GitHub repository**
+3. **Deploy automatically** - Vercel will detect it's a React app
+4. **Set environment variables** in Vercel dashboard:
+   - `REACT_APP_API_URL`: Your backend URL (e.g., `https://your-app.railway.app`)
+
+#### Backend (Express) - Railway
+1. **Sign up** at [railway.app](https://railway.app)
+2. **Connect your GitHub repository**
+3. **Select the `apps/server` directory**
+4. **Deploy automatically** - Railway will detect it's a Node.js app
+5. **Get your backend URL** from Railway dashboard
+6. **Update frontend** with the backend URL
+
+#### Alternative Backend Options:
+- **Render**: [render.com](https://render.com) - Free tier available
+- **Heroku**: [heroku.com](https://heroku.com) - Free tier discontinued, but paid options available
+
+### Manual Deployment Steps
+
+#### 1. Deploy Backend First
+```bash
+# Navigate to server directory
+cd apps/server
+
+# Install dependencies
+npm install
+
+# Deploy to Railway
+# 1. Go to railway.app
+# 2. Connect your GitHub repo
+# 3. Select the server directory
+# 4. Deploy
+```
+
+#### 2. Deploy Frontend
+```bash
+# Navigate to client directory
+cd apps/client
+
+# Install dependencies
+npm install
+
+# Build for production
+npm run build
+
+# Deploy to Vercel
+# 1. Go to vercel.com
+# 2. Connect your GitHub repo
+# 3. Select the client directory
+# 4. Set environment variables
+# 5. Deploy
+```
+
+### Environment Variables
+
+#### Backend (Railway/Render)
+- `PORT`: Automatically set by platform
+- `JWT_SECRET`: Set a secure secret key
+
+#### Frontend (Vercel)
+- `REACT_APP_API_URL`: Your backend URL (e.g., `https://your-app.railway.app`)
+
+### Testing the Deployment
+
+1. **Trainer Flow**:
+   - Email: `trainer@example.com`
+   - Password: `trainer123`
+
+2. **Student Flow**:
+   - Use any mobile number
+   - OTP is always `1234` for demo
+
+### Troubleshooting
+
+- **CORS Issues**: Backend is configured with CORS enabled
+- **API Not Found**: Check if backend URL is correctly set in frontend
+- **Build Failures**: Ensure all dependencies are in package.json
 
 ## 🚀 Features
 
