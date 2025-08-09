@@ -10,6 +10,31 @@ const PORT = process.env.PORT || 5000;
 console.log(`🔧 Server configuration:`);
 console.log(`   - PORT: ${PORT}`);
 console.log(`   - NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://energetic-grace-production.up.railway.app', 'https://energetic-grace-production.up.railway.app/']
+    : ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+console.log('✅ CORS middleware configured');
+
 console.log(`   - Working directory: ${process.cwd()}`);
 
 // Basic middleware
