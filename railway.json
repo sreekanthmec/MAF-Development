@@ -5,7 +5,7 @@
     "buildCommand": "cd apps/server && npm install"
   },
   "deploy": {
-    "startCommand": "cd apps/server && node index.js",
+    "startCommand": "cd apps/server && node clean-server.js",
     "healthcheckPath": "/api/ping",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
