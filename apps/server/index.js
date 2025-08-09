@@ -107,6 +107,19 @@ app.post("/api/otp/validate", (req, res) => {
   res.json({ accessToken, user });
 });
 
+const PORT = process.env.PORT || 5000;
+
+// Process error handlers
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
 // Health check endpoint
 app.get("/api/ping", (req, res) => {
   res.json({ 
@@ -131,7 +144,7 @@ app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(500).json({ 
     error: 'Something went wrong!',
-    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
 });
 
@@ -140,12 +153,17 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`🚀 MAF Development Server started successfully!`);
   console.log(`📍 Server running on port: ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`⏰ Started at: ${new Date().toISOString()}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/api/ping`);
+  console.log(`🔗 Root endpoint: http://localhost:${PORT}/`);
+}).on('error', (err) => {
+  console.error('❌ Failed to start server:', err.message);
+  if (err.code === 'EADDRINUSE') {
+    console.error('💡 Port is already in use. Try a different port or kill the process using this port.');
+  }
+  process.exit(1);
 });
