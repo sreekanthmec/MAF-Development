@@ -1,8 +1,10 @@
 import axios from "axios";
+import { API_BASE_URL, API_TIMEOUT } from "../config/api";
 
 // Create an Axios instance with base configuration
 const api = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: API_BASE_URL,
+  timeout: API_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
   },
@@ -77,7 +79,7 @@ export const updateProfile = async (profileData) => {
 export const refreshToken = async () => {
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/token",
+      `${API_BASE_URL}/auth/token`,
       {}, // Empty body
       {
         withCredentials: true, // Ensure cookies (like refreshToken) are sent

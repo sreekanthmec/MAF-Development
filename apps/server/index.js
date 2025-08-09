@@ -3,10 +3,29 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
 
-app.use(cors());
+// CORS configuration for production
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://energetic-grace-production.up.railway.app',
+        'https://your-client-domain.com', // Replace with your actual client domain
+        'http://localhost:3000', // Keep localhost for development
+        'http://localhost:3001'
+      ]
+    : ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 app.use(express.json());
 
-const JWT_SECRET = "supersecretkey"; // Use env in production
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${req.ip}`);
+  next();
+});
+
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey"; // Use env in production
 const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
 // In-memory stores
@@ -88,9 +107,45 @@ app.post("/api/otp/validate", (req, res) => {
   res.json({ accessToken, user });
 });
 
+// Health check endpoint
 app.get("/api/ping", (req, res) => {
-  res.json({ message: "API is working!" });
+  res.json({ 
+    message: "API is working!", 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    port: PORT
+  });
+});
+
+// Root endpoint for basic connectivity test
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "MAF Development Server", 
+    status: "running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(500).json({ 
+    error: 'Something went wrong!',
+    message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`🚀 MAF Development Server started successfully!`);
+  console.log(`📍 Server running on port: ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`⏰ Started at: ${new Date().toISOString()}`);
+  console.log(`🔗 Health check: http://localhost:${PORT}/api/ping`);
+});
