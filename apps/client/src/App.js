@@ -69,6 +69,10 @@ const BlurredBg = styled.div`
   z-index: 0;
   background: url('/image.png') center center / cover no-repeat;
   filter: blur(16px) brightness(0.8);
+  
+  @media (max-width: 768px) {
+    display: none; /* Hide blue effect on mobile */
+  }
 `;
 
 const CenteredWrapper = styled.div`
@@ -80,6 +84,18 @@ const CenteredWrapper = styled.div`
   z-index: 1;
   overflow: auto;
   overflow-x: hidden;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    display: block;
+    width: 100vw;
+    height: auto;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const MobileContainer = styled.div`
@@ -93,6 +109,18 @@ const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 100vw;
+  
+  @media (max-width: 768px) {
+    width: 100vw;
+    max-width: 100vw;
+    min-height: auto;
+    box-shadow: none;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    right: 0;
+  }
 `;
 
 function App() {

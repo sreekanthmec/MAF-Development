@@ -17,6 +17,10 @@ const BlurredBg = styled.div`
   z-index: 0;
   background: url('/image.png') center center / cover no-repeat;
   filter: blur(16px) brightness(0.8);
+  
+  @media (max-width: 768px) {
+    display: none; /* Hide blue effect on mobile */
+  }
 `;
 
 const CenteredWrapper = styled.div`
@@ -27,6 +31,14 @@ const CenteredWrapper = styled.div`
   justify-content: center;
   z-index: 1;
   overflow: auto;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
 `;
 
 const MobileContainer = styled.div`
@@ -38,6 +50,14 @@ const MobileContainer = styled.div`
   box-shadow: 0 0 32px 0 rgba(0,0,0,0.10);
   display: flex;
   flex-direction: column;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    box-shadow: none;
+    overflow: visible;
+  }
 `;
 
 const BackgroundImage = styled.div`
@@ -51,6 +71,10 @@ const BackgroundImage = styled.div`
   background-size: cover;
   background-position: center;
   z-index: 0;
+  
+  @media (max-width: 768px) {
+    display: none; /* Hide background image on mobile */
+  }
 `;
 
 const LogoBar = styled.div`
@@ -65,6 +89,13 @@ const LogoBar = styled.div`
   left: 0;
   top: 0;
   z-index: 2;
+  
+  @media (max-width: 768px) {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+  }
 `;
 
 const LogoText = styled.div`
@@ -74,6 +105,10 @@ const LogoText = styled.div`
   font-size: 24px;
   line-height: 30px;
   color: #B0B0B0;
+  
+  @media (max-width: 768px) {
+    color: #333;
+  }
 `;
 
 const TrainText = styled.div`

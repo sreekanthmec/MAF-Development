@@ -69,6 +69,12 @@ const DashboardContainer = styled.div`
   min-height: 100vh;
   background: #F7F7F7;
   box-sizing: border-box;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+  }
 `;
 
 const GradientHeader = styled.div`
@@ -84,6 +90,12 @@ const GradientHeader = styled.div`
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -99,6 +111,12 @@ const HeaderContainer = styled.div`
   background: linear-gradient(157.07deg, #3A3A3A 0%, #252525 81.65%);
   border-radius: 0;
   position: relative;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
 `;
 
 const VectorBg = styled.div`

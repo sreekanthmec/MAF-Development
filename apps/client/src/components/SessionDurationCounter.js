@@ -3,87 +3,39 @@ import React from "react";
 const SessionDurationCounter = ({ duration, onIncrease, onDecrease }) => {
   return (
     <div
-      className="flex justify-between items-center"
+      className="flex justify-between items-center w-[320px] h-[48px] border border-[#B1B1B1] px-4 py-2.5"
       style={{
         boxSizing: "border-box",
-        padding: "10px 16px",
-        border: "1px solid #B1B1B1",
-        width: "320px",
-        height: "48px",
       }}
     >
       <button
         onClick={onDecrease}
-        className="relative flex justify-center items-center"
-        style={{
-          width: "24px",
-          height: "24px",
-          background: "#FA403F",
-          borderRadius: "4px",
-        }}
+        className="relative flex justify-center items-center w-6 h-6 bg-[#FA403F] rounded"
         disabled={duration <= 30}
       >
         <div
-          style={{
-            width: "16px",
-            height: "2px",
-            backgroundColor: "#FFFFFF",
-            position: "absolute",
-          }}
+          className="w-4 h-0.5 bg-white absolute"
         />
       </button>
 
       <div
-        className="flex justify-center items-center"
-        style={{
-          fontFamily: "Manrope",
-          fontWeight: 800,
-          fontSize: "14px",
-          lineHeight: "16px",
-          textAlign: "center",
-          width: "110px",
-          height: "17px",
-        }}
+        className="flex justify-center items-center font-manrope font-extrabold text-sm leading-4 text-center w-[110px] h-4"
       >
         {duration} mins Session
       </div>
 
       <button
         onClick={onIncrease}
-        className="relative flex justify-center items-center"
-        style={{
-          width: "24px",
-          height: "24px",
-          background: "#FA403F",
-          borderRadius: "4px",
-        }}
+        className="relative flex justify-center items-center w-6 h-6 bg-[#FA403F] rounded"
       >
         <div
-          style={{
-            width: "16px",
-            height: "16px",
-            position: "relative",
-          }}
+          className="w-4 h-4 relative"
         >
           <div
-            style={{
-              width: "16px",
-              height: "2px",
-              backgroundColor: "#FFFFFF",
-              position: "absolute",
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
+            className="w-4 h-0.5 bg-white absolute top-1/2 transform -translate-y-1/2"
           />
           <div
-            style={{
-              width: "2px",
-              height: "16px",
-              backgroundColor: "#FFFFFF",
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
+            className="w-0.5 h-4 bg-white absolute left-1/2 transform -translate-x-1/2"
           />
         </div>
       </button>
