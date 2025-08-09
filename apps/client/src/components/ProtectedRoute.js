@@ -25,7 +25,6 @@ const ProtectedRoute = ({ children, role }) => {
 
     // Check if user has the correct role
     if (decodedToken.role !== role) {
-      // User has wrong role, redirect to their correct role's login
       return <Navigate to={`/${decodedToken.role}`} replace />;
     }
   } catch (error) {

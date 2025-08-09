@@ -30,10 +30,10 @@ const CountdownContainer = styled.div`
 const CountdownText = styled.p`
   font-family: "Manrope", sans-serif;
   font-style: normal;
-  font-weight: ${(props) => (props.bold ? "800" : "500")};
+  font-weight: ${(props) => (props.$bold ? "800" : "500")};
   font-size: 12px;
   margin: 0;
-  width: ${(props) => (props.bold ? "36px" : "87px")};
+  width: ${(props) => (props.$bold ? "36px" : "87px")};
 `;
 
 const OtpVerification = ({ role = "student" }) => {
@@ -68,7 +68,13 @@ const OtpVerification = ({ role = "student" }) => {
     setLoading(true);
     try {
       const response = await validateOtp(countryCode, mobileNumber, otpCode, currentRole);
-      console.log(response);
+      
+      // Store the user role in localStorage for ProtectedRoute
+      localStorage.setItem("userRole", currentRole);
+      
+      // Add a small delay to ensure localStorage is set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       setLoading(false);
       
       // Navigate based on role
@@ -107,7 +113,7 @@ const OtpVerification = ({ role = "student" }) => {
 
         <CountdownContainer>
           <CountdownText>Didn't Receive?</CountdownText>
-          <CountdownText bold>{`00:${
+          <CountdownText $bold>{`00:${
             timer < 10 ? `0${timer}` : timer
           }`}</CountdownText>
         </CountdownContainer>

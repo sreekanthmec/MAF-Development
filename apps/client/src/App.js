@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 
 // Student App Screens
 import Home from "./screens/Home";
@@ -60,10 +60,6 @@ import "./index.css";
 const stripePromise = loadStripe(
   "pk_live_51PpktVDR2pvMyQSxRdkf40Llbz6F3crrn6YulljLEzLeMeE0cns4BFWSqCPlLQ73vzypSfTvse4f1PVp0L4e3Rgy00vpPhb5pX"
 );
-
-const GlobalFonts = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Racing+Sans+One&family=Roboto+Flex:ital,wght@1,900&display=swap');
-`;
 
 const BlurredBg = styled.div`
   position: fixed;
@@ -154,7 +150,6 @@ function App() {
 
   return (
     <Elements stripe={stripePromise}>
-      <GlobalFonts />
       <BlurredBg />
       <CenteredWrapper>
         <MobileContainer>

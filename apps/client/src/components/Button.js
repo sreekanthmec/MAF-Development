@@ -1,11 +1,11 @@
 import React from "react";
 
-export const PrimaryButton = ({ label, onClick, disabled = false }) => {
+export const PrimaryButton = ({ label, onClick, disabled = false, className = "" }) => {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className="flex justify-between items-center px-6 py-[19px] w-[320px] h-[52px] border-0 bg-[#EB2726] text-white font-bold"
+      className={`flex justify-between items-center px-6 py-[19px] w-[320px] h-[52px] border-0 bg-[#EB2726] text-white font-bold ${className}`}
     >
       <span className="font-manrope font-extrabold text-[14px] leading-[20px] tracking-[0.02em] text-left">
         {label}
@@ -24,25 +24,16 @@ export const PrimaryButton = ({ label, onClick, disabled = false }) => {
   );
 };
 
-export const SecondaryButton = ({ label, onClick }) => {
+export const SecondaryButton = ({ label, onClick, icon: Icon, className = "" }) => {
   return (
     <button
       onClick={onClick}
-      className="flex justify-between items-center px-6 py-[10px] w-[320px] h-[52px] border bg-transparent border-gray-800"
+      className={`flex items-center justify-center px-6 py-[19px] w-[320px] h-[52px] bg-transparent text-[#D62422] font-bold ${className}`}
     >
-      <span className="font-manrope font-extrabold text-[14px] leading-[20px] tracking-[0.02em] text-left">
+      {Icon && <Icon className="mr-2 w-6 h-6" />}
+      <span className="font-manrope font-extrabold text-[14px] leading-[20px] tracking-[0.02em] text-center">
         {label}
       </span>
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M0 12H22.5" stroke="#B0B0B0" strokeWidth="2" />
-        <path d="M14.5 20L22.5 12L14.5 4" stroke="#B0B0B0" strokeWidth="2" />
-      </svg>
     </button>
   );
 };

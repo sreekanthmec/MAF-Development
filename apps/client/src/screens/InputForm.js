@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { PrimaryButton } from "../components/Button";
 
 const InputForm = ({
   className = "",
@@ -45,20 +46,11 @@ const InputForm = ({
             </div>
           </div>
         </div>
-        <div
-          className="self-stretch bg-project-colours-b300 flex flex-row items-center justify-between py-3.5 px-6 top-[0] z-[99] sticky gap-5 cursor-pointer text-left text-project-colours-white"
+        <PrimaryButton
           onClick={onSendOtp}
-        >
-          <div className="relative tracking-[0.02em] leading-[20px] uppercase font-extrabold inline-block min-w-[45px]">
-            {loading ? "Sending..." : "Login"}
-          </div>
-          <img
-            className="h-6 w-6 relative overflow-hidden shrink-0"
-            loading="lazy"
-            alt=""
-            src="/linearrowright1streamlinesharp.svg"
-          />
-        </div>
+          disabled={loading}
+          label={loading ? "SENDING..." : "LOGIN"}
+        />
         {error && <div className="text-red-500">{error}</div>}
         <div className="self-stretch relative text-xs leading-[14px] font-medium">{`By logging in, I agree with MAF’s Terms & Conditions`}</div>
       </div>

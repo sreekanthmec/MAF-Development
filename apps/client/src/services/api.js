@@ -9,9 +9,15 @@ const api = axios.create({
   withCredentials: true, // Include credentials (cookies) in requests
 });
 
+// Helper function to add delay for mock API calls
+const addDelay = (ms = 2000) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 // Function to send OTP
 export const sendOtp = async (countryCode, mobileNumber, role) => {
   try {
+    await addDelay(); // Add 2-second delay
     const response = await api.post("/otp/send", {
       countryCode,
       mobileNumber,
@@ -27,6 +33,7 @@ export const sendOtp = async (countryCode, mobileNumber, role) => {
 // Function to validate OTP and store access token
 export const validateOtp = async (countryCode, mobileNumber, otpCode, role) => {
   try {
+    await addDelay(); // Add 2-second delay
     const response = await api.post("/otp/validate", {
       countryCode,
       mobileNumber,
@@ -36,7 +43,7 @@ export const validateOtp = async (countryCode, mobileNumber, otpCode, role) => {
     localStorage.setItem("accessToken", response.data.accessToken); // Store the access token
     return response.data;
   } catch (error) {
-    console.error("Erðror validating OTP:", error);
+    console.error("Error validating OTP:", error);
     throw error;
   }
 };
@@ -44,6 +51,7 @@ export const validateOtp = async (countryCode, mobileNumber, otpCode, role) => {
 // Function for trainer login
 export const trainerLogin = async (email, password) => {
   try {
+    await addDelay(); // Add 2-second delay
     const response = await api.post("/trainer/login", {
       email,
       password,
@@ -56,56 +64,13 @@ export const trainerLogin = async (email, password) => {
   }
 };
 
-// Function to update the user profile
+// Function to update the user profile (dummy for now)
 export const updateProfile = async (profileData) => {
-  try {
-    const accessToken = localStorage.getItem("accessToken");
-
-    // Check if the token is valid before proceeding
-    if (!accessToken) {
-      throw new Error("No access token found");
-    }
-
-    const decodedToken = decodeJwt(accessToken); // Decode the token to get the _id
-    const userId = decodedToken._id;
-
-    // Create FormData object
-    const formData = new FormData();
-    formData.append("_id", userId); // Ensure the user ID is appended
-
-    // Conditionally append fields only if they have defined values
-    if (profileData.name) formData.append("name", profileData.name);
-    if (profileData.age) formData.append("age", profileData.age);
-    if (profileData.sex) formData.append("sex", profileData.sex);
-    if (profileData.hasGloves !== undefined)
-      formData.append("hasGloves", profileData.hasGloves);
-    if (profileData.gloveSize)
-      formData.append("gloveSize", profileData.gloveSize);
-    if (profileData.hasHandwrap !== undefined)
-      formData.append("hasHandwrap", profileData.hasHandwrap);
-
-    // Send the API request
-    const response = await api.post("/user/addProfile", formData, {
-      withCredentials: true,
-      headers: {
-        Authorization: `${accessToken}`, // Use token without Bearer
-        "Content-Type": "multipart/form-data", // This header is automatically set by FormData, but specifying it here ensures it remains consistent
-      },
-    });
-
-    return response.data; // Return the response data
-  } catch (error) {
-    console.error("Error updating profile:", error);
-
-    if (error.response && error.response.status === 403) {
-      console.error(
-        "Forbidden error - possibly due to an invalid or expired token."
-      );
-    }
-
-    // Re-throw the error to handle it in the calling function
-    throw error;
-  }
+  await addDelay(); // Simulate network delay
+  // Optionally log the data for debugging
+  console.log("Mock updateProfile called with:", profileData);
+  // Return a dummy success response
+  return { success: true, profile: profileData };
 };
 
 // Function to refresh the token

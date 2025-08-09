@@ -22,14 +22,14 @@ const OtpInput = styled.input`
   height: 48px;
   border: 1px solid
     ${(props) =>
-      props.hasError ? "#D62422" : props.isFocused ? "#D62422" : "#B1B1B1"};
+      props.$hasError ? "#D62422" : props.$isFocused ? "#D62422" : "#B1B1B1"};
   font-family: "Manrope", sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   text-align: center;
   line-height: 120%;
-  color: ${(props) => (props.hasError ? "#D62422" : "#000000")};
+  color: ${(props) => (props.$hasError ? "#D62422" : "#000000")};
   outline: none; /* Remove the default blue outline */
   &:focus {
     border-color: #d62422; /* Set focus border color to #D62422 */
@@ -75,8 +75,8 @@ const OtpView = ({ otp, setOtp, error, clearError }) => {
           type="text"
           maxLength="1"
           value={digit}
-          hasError={error && digit === ""}
-          isFocused={focusedIndex === index}
+          $hasError={error && digit === ""}
+          $isFocused={focusedIndex === index}
           ref={(el) => (inputRefs.current[index] = el)}
           onChange={(e) => handleChange(index, e.target.value)}
           onFocus={() => handleFocus(index)}
