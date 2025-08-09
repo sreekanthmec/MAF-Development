@@ -1,10 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+
+console.log('🚀 Starting server initialization...');
+console.log('📦 Dependencies loaded successfully');
+
 const app = express();
 
 // CORS configuration for production
-app.use(cors({
+console.log('🌍 Setting up CORS...');
+const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [
         'https://energetic-grace-production.up.railway.app',
@@ -16,8 +21,12 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+};
+
+console.log('🔧 CORS origins:', corsOptions.origin);
+app.use(cors(corsOptions));
 app.use(express.json());
+console.log('✅ CORS and JSON middleware configured');
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -109,6 +118,11 @@ app.post("/api/otp/validate", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
+console.log('🔧 Server configuration:');
+console.log(`   - PORT: ${PORT}`);
+console.log(`   - NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+console.log(`   - Current working directory: ${process.cwd()}`);
+
 // Process error handlers
 process.on('uncaughtException', (err) => {
   console.error('❌ Uncaught Exception:', err);
@@ -120,8 +134,19 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
+// Simple test endpoint (no dependencies)
+app.get("/test", (req, res) => {
+  console.log('🧪 Test endpoint requested');
+  res.json({ 
+    message: "Test endpoint working!", 
+    timestamp: new Date().toISOString(),
+    status: "ok"
+  });
+});
+
 // Health check endpoint
 app.get("/api/ping", (req, res) => {
+  console.log('🏥 Health check requested');
   res.json({ 
     message: "API is working!", 
     timestamp: new Date().toISOString(),
@@ -132,6 +157,7 @@ app.get("/api/ping", (req, res) => {
 
 // Root endpoint for basic connectivity test
 app.get("/", (req, res) => {
+  console.log('🏠 Root endpoint requested');
   res.json({ 
     message: "MAF Development Server", 
     status: "running",
