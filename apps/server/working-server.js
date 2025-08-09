@@ -19,6 +19,92 @@ app.use(express.json());
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 console.log('✅ JWT configured');
 
+// In-memory stores
+const users = {};
+const otps = {};
+const trainers = {
+  "trainer@example.com": {
+    password: "trainer123",
+    name: "John Trainer",
+    role: "trainer"
+  }
+};
+
+console.log('✅ In-memory stores configured');
+
+// Trainer login endpoint
+app.post("/api/trainer/login", (req, res) => {
+  console.log('🔐 Trainer login endpoint hit');
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+  
+  const trainer = trainers[email];
+  if (!trainer || trainer.password !== password) {
+    return res.status(401).json({ error: "Invalid email or password" });
+  }
+  
+  const accessToken = jwt.sign(
+    { email, role: "trainer", _id: email, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+    JWT_SECRET
+  );
+  
+  res.json({ accessToken, user: { email, name: trainer.name, role: "trainer" } });
+});
+
+// Send OTP endpoint
+app.post("/api/otp/send", (req, res) => {
+  console.log('📱 Send OTP endpoint hit');
+  const { countryCode, mobileNumber, role } = req.body;
+  if (!countryCode || !mobileNumber || !role) {
+    return res.status(400).json({ error: "countryCode, mobileNumber, and role are required" });
+  }
+  
+  const otp = "1234";
+  otps[mobileNumber] = {
+    otp,
+    expiresAt: Date.now() + (5 * 60 * 1000),
+    role,
+  };
+  
+  res.json({ message: `OTP sent to ${countryCode}${mobileNumber} for role ${role}` });
+});
+
+// Validate OTP endpoint
+app.post("/api/otp/validate", (req, res) => {
+  console.log('✅ Validate OTP endpoint hit');
+  const { countryCode, mobileNumber, otpCode, role } = req.body;
+  if (!countryCode || !mobileNumber || !otpCode || !role) {
+    return res.status(400).json({ error: "countryCode, mobileNumber, otpCode, and role are required" });
+  }
+  
+  const otpEntry = otps[mobileNumber];
+  if (!otpEntry || otpEntry.otp !== otpCode || otpEntry.role !== role) {
+    return res.status(401).json({ error: "Invalid OTP or role" });
+  }
+  
+  if (Date.now() > otpEntry.expiresAt) {
+    delete otps[mobileNumber];
+    return res.status(401).json({ error: "OTP expired" });
+  }
+  
+  if (!users[mobileNumber]) {
+    users[mobileNumber] = { countryCode, mobileNumber, role };
+  }
+  
+  const user = users[mobileNumber];
+  const accessToken = jwt.sign(
+    { countryCode, mobileNumber, role, _id: mobileNumber, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
+    JWT_SECRET
+  );
+  
+  delete otps[mobileNumber];
+  res.json({ accessToken, user });
+});
+
+console.log('✅ Authentication endpoints configured');
+
 // Test endpoint
 app.get('/test', (req, res) => {
   console.log('🧪 Test endpoint hit');
@@ -42,7 +128,7 @@ app.get('/api/ping', (req, res) => {
 app.get('/', (req, res) => {
   console.log('🏠 Root endpoint hit');
   res.json({
-    message: 'MAF Working Server with JWT',
+    message: 'MAF Working Server with Authentication',
     timestamp: new Date().toISOString()
   });
 });
