@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 console.log('🚀 Starting server initialization...');
 console.log('📦 Dependencies loaded successfully');
@@ -27,6 +28,11 @@ console.log('🔧 CORS origins:', corsOptions.origin);
 app.use(cors(corsOptions));
 app.use(express.json());
 console.log('✅ CORS and JSON middleware configured');
+
+// Serve static files from React app build
+const buildPath = path.join(__dirname, '../client/build');
+app.use(express.static(buildPath));
+console.log('📁 Static files configured:', buildPath);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -155,14 +161,11 @@ app.get("/api/ping", (req, res) => {
   });
 });
 
-// Root endpoint for basic connectivity test
+// Root endpoint serves React app
 app.get("/", (req, res) => {
-  console.log('🏠 Root endpoint requested');
-  res.json({ 
-    message: "MAF Development Server", 
-    status: "running",
-    timestamp: new Date().toISOString()
-  });
+  console.log('🏠 Root endpoint requested - serving React app');
+  const buildPath = path.join(__dirname, '../client/build');
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 // Error handling middleware
@@ -174,9 +177,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+// Catch all handler: send back React's index.html file for any non-API routes
+app.get('*', (req, res) => {
+  // Don't serve React app for API routes
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  console.log('🔄 Catch-all route - serving React app for:', req.path);
+  const buildPath = path.join(__dirname, '../client/build');
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
