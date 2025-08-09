@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 console.log('🚀 Starting working server...');
 console.log('📦 Express loaded successfully');
@@ -13,6 +14,10 @@ console.log(`   - Working directory: ${process.cwd()}`);
 
 // Basic middleware
 app.use(express.json());
+
+// JWT secret
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+console.log('✅ JWT configured');
 
 // Test endpoint
 app.get('/test', (req, res) => {
@@ -37,7 +42,7 @@ app.get('/api/ping', (req, res) => {
 app.get('/', (req, res) => {
   console.log('🏠 Root endpoint hit');
   res.json({
-    message: 'MAF Working Server',
+    message: 'MAF Working Server with JWT',
     timestamp: new Date().toISOString()
   });
 });
