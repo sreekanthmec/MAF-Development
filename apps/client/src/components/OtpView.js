@@ -3,88 +3,78 @@ import styled from "styled-components";
 
 const OtpContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: start;
   gap: 16px;
-  align-self: center;
-  width: 100%;
-  padding-left: 20px;
-  margin-top: 40px;
+  padding: 40px 0 0 20px;
 `;
 
 const OtpInput = styled.input`
   box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 8px;
   width: 40px;
   height: 48px;
+  padding: 10px 8px;
+  text-align: center;
+
   border: 1px solid
-    ${(props) =>
-      props.$hasError ? "#D62422" : props.$isFocused ? "#D62422" : "#B1B1B1"};
+    ${(p) => (p.$hasError ? "#D62422" : p.$isFocused ? "#D62422" : "#B1B1B1")};
+  background: #fff;
+  border-radius: 0;            /* ← square corners */
+  -webkit-appearance: none;    /* iOS: prevent default rounding */
+  appearance: none;
+
   font-family: "Manrope", sans-serif;
-  font-style: normal;
   font-weight: 500;
   font-size: 14px;
-  text-align: center;
-  line-height: 120%;
-  color: ${(props) => (props.$hasError ? "#D62422" : "#000000")};
-  outline: none; /* Remove the default blue outline */
-  &:focus {
-    border-color: #d62422; /* Set focus border color to #D62422 */
-  }
+  color: ${(p) => (p.$hasError ? "#D62422" : "#000")};
+
+  outline: none;
+  &:focus { border-color: #d62422; }
 `;
 
-const OtpView = ({ otp, setOtp, error, clearError }) => {
+export default function OtpView({ otp, setOtp, error, clearError }) {
   const [focusedIndex, setFocusedIndex] = useState(null);
   const inputRefs = useRef([]);
 
-  const handleChange = (index, value) => {
-    if (/^[0-9]$/.test(value) || value === "") {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
-      clearError(); // Clear error when user starts typing
+  const handleChange = (index, val) => {
+    if (!/^\d?$/.test(val)) return;
+    const next = [...otp];
+    next[index] = val;
+    setOtp(next);
+    if (error) clearError();
 
-      // Move focus to the next input field
-      if (value !== "" && index < inputRefs.current.length - 1) {
-        inputRefs.current[index + 1].focus();
-      }
-
-      // Move focus to the previous input field if backspace is pressed and the field is empty
-      if (value === "" && index > 0) {
-        inputRefs.current[index - 1].focus();
-      }
+    if (val && index < inputRefs.current.length - 1) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleFocus = (index) => {
-    setFocusedIndex(index);
-  };
-
-  const handleBlur = () => {
-    setFocusedIndex(null);
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+    if (e.key === "ArrowLeft" && index > 0) inputRefs.current[index - 1]?.focus();
+    if (e.key === "ArrowRight" && index < inputRefs.current.length - 1)
+      inputRefs.current[index + 1]?.focus();
   };
 
   return (
     <OtpContainer>
-      {otp.map((digit, index) => (
+      {otp.map((digit, i) => (
         <OtpInput
-          key={index}
+          key={i}
           type="text"
-          maxLength="1"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={digit}
-          $hasError={error && digit === ""}
-          $isFocused={focusedIndex === index}
-          ref={(el) => (inputRefs.current[index] = el)}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onFocus={() => handleFocus(index)}
-          onBlur={handleBlur}
+          maxLength={1}
+          $hasError={!!error && digit === ""}
+          $isFocused={focusedIndex === i}
+          ref={(el) => (inputRefs.current[i] = el)}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onFocus={() => setFocusedIndex(i)}
+          onBlur={() => setFocusedIndex(null)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          aria-label={`OTP digit ${i + 1}`}
         />
       ))}
     </OtpContainer>
   );
-};
-
-export default OtpView;
+}

@@ -1,233 +1,325 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
-import { Calendar, Clock, ArrowLeft } from "lucide-react";
+import styled from "styled-components";
+import { ArrowLeft, Calendar } from "lucide-react";
+import SessionCardItem from "../components/SessionCardItem";
 
-const TrainerSessions = () => {
+type Tab = "upcoming" | "completed";
+
+type UpcomingSessionItem = {
+  id: number;
+  date: string;              // "AUG 12"
+  time: string;              // "10:00 AM - 11:00AM"
+  participant: string;       // "Name, age, gender"
+  countdown?: string | null; // if present -> green bar shows
+  isHighlighted?: boolean;
+};
+
+type CompletedSessionItem = {
+  id: number;
+  date: string;
+  time: string;
+  participant: string;
+  earnings: string;
+};
+
+/* ─────────────────────────────
+   Shell scroll area (works with AppLayout)
+────────────────────────────── */
+const PageScroller = styled.div`
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+`;
+
+const Screen = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+`;
+
+const Header = styled.header`
+  background: #ffffff;
+  padding: 24px 20px 16px;
+`;
+
+const BackRow = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const BackBtn = styled.button`
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+`;
+
+const HeaderTag = styled.p`
+  color: #6b7280; /* gray-500 */
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+`;
+
+const TabsBar = styled.div`
+  background: #ffffff;
+  padding: 0 20px 12px;
+`;
+
+const Tabs = styled.div`
+  display: flex;
+`;
+
+const TabBtn = styled.button<{ $active: boolean }>`
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: ${(p) => (p.$active ? "#000" : "#6b7280")};
+  border: 0;
+  border-bottom: 2px solid ${(p) => (p.$active ? "#000" : "transparent")};
+  background: transparent;
+  cursor: pointer;
+`;
+
+const DatePickerWrap = styled.div`
+  background: #ffffff;
+  padding: 0 20px 24px;
+`;
+
+const DateScroller = styled.div`
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+`;
+
+const DateBtn = styled.button<{ $selected: boolean }>`
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 12px;
+  background: #ffffff;
+  border: ${(p) => (p.$selected ? "2px solid #D62422" : "1px solid #e5e7eb")};
+  cursor: pointer;
+`;
+
+const DateMonth = styled.div<{ $sel: boolean }>`
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: ${(p) => (p.$sel ? "#D62422" : "#6b7280")};
+`;
+
+const DateDay = styled.div<{ $sel: boolean }>`
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: ${(p) => (p.$sel ? "#D62422" : "#111827")};
+`;
+
+const DateWeekday = styled.div<{ $sel: boolean }>`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${(p) => (p.$sel ? "#D62422" : "#6b7280")};
+`;
+
+const ListSection = styled.section`
+  background: #f3f4f6; /* gray-100 */
+  padding: 24px 20px;
+  flex: 1 0 auto;
+`;
+
+const StackY = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const CompletedCard = styled.div`
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+`;
+
+const Badge = styled.div`
+  background: #e5e7eb;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 12px;
+`;
+
+const Right = styled.div`
+  text-align: right;
+  margin-left: 16px;
+  flex: 1;
+`;
+
+const Small = styled.div`
+  color: #6b7280;
+  font-size: 14px;
+`;
+
+const Strong = styled.div`
+  color: #111827;
+  font-weight: 600;
+  font-size: 14px;
+`;
+
+const Earned = styled.div`
+  margin-top: 4px;
+  color: #16a34a;
+  font-weight: 800;
+  font-size: 14px;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 48px 0 8px;
+  color: #6b7280;
+`;
+
+/* ─────────────────────────────
+   Component
+────────────────────────────── */
+const TrainerSessions: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'completed'>('upcoming');
-  const [selectedDate, setSelectedDate] = useState('12');
+  const [activeTab, setActiveTab] = useState<Tab>("upcoming");
+  const [selectedDate, setSelectedDate] = useState("12");
 
-  const sessionsData = {
+  const sessionsData: {
+    upcomingSessions: UpcomingSessionItem[];
+    completedSessions: CompletedSessionItem[];
+  } = {
     upcomingSessions: [
-      { 
-        id: 1, 
-        date: "AUG 12", 
-        time: "10:00 AM - 11:00AM", 
-        participant: "Arun P, 22, F",
-        countdown: "2d 4h 30m",
-        isHighlighted: true
-      },
-      { 
-        id: 2, 
-        date: "AUG 12", 
-        time: "10:00 AM - 11:00AM", 
-        participant: "Lazar Amigano, 22, M",
-        countdown: null,
-        isHighlighted: false
-      },
-      { 
-        id: 3, 
-        date: "AUG 12", 
-        time: "10:00 AM - 11:00AM", 
-        participant: "Lazar Amigano, 22, M",
-        countdown: null,
-        isHighlighted: false
-      },
-      { 
-        id: 4, 
-        date: "AUG 12", 
-        time: "10:00 AM - 11:00AM", 
-        participant: "Lazar Amigano, 22, M",
-        countdown: null,
-        isHighlighted: false
-      },
-      { 
-        id: 5, 
-        date: "AUG 12", 
-        time: "10:00 AM - 11:00AM", 
-        participant: "Lazar Amigano, 22, M",
-        countdown: null,
-        isHighlighted: false
-      }
+      { id: 1, date: "AUG 12", time: "10:00 AM - 11:00AM", participant: "Arun P, 22, F", countdown: "2d 4h 30m", isHighlighted: true },
+      { id: 2, date: "AUG 12", time: "10:00 AM - 11:00AM", participant: "Lazar Amigano, 22, M", countdown: null },
+      { id: 3, date: "AUG 12", time: "10:00 AM - 11:00AM", participant: "Lazar Amigano, 22, M", countdown: null },
+      { id: 4, date: "AUG 12", time: "10:00 AM - 11:00AM", participant: "Lazar Amigano, 22, M", countdown: null },
+      { id: 5, date: "AUG 12", time: "10:00 AM - 11:00AM", participant: "Lazar Amigano, 22, M", countdown: null },
     ],
     completedSessions: [
-      { 
-        id: 6, 
-        date: "AUG 11", 
-        time: "9:00 AM - 10:00AM", 
-        participant: "Emma Davis, 25, F",
-        earnings: "$50"
-      },
-      { 
-        id: 7, 
-        date: "AUG 10", 
-        time: "1:00 PM - 2:30PM", 
-        participant: "Ryan Lee, 28, M",
-        earnings: "$75"
-      },
-      { 
-        id: 8, 
-        date: "AUG 9", 
-        time: "5:00 PM - 7:00PM", 
-        participant: "Lisa Chen, 23, F",
-        earnings: "$100"
-      }
-    ]
+      { id: 6, date: "AUG 11", time: "9:00 AM - 10:00AM", participant: "Emma Davis, 25, F", earnings: "$50" },
+      { id: 7, date: "AUG 10", time: "1:00 PM - 2:30PM", participant: "Ryan Lee, 28, M", earnings: "$75" },
+      { id: 8, date: "AUG 9", time: "5:00 PM - 7:00PM", participant: "Lisa Chen, 23, F", earnings: "$100" },
+    ],
   };
 
   const calendarDates = [
     { day: "12", month: "AUG", weekday: "WED", isSelected: true },
     { day: "13", month: "AUG", weekday: "THU", isSelected: false },
     { day: "14", month: "AUG", weekday: "FRI", isSelected: false },
-    { day: "15", month: "AUG", weekday: "SAT", isSelected: false }
+    { day: "15", month: "AUG", weekday: "SAT", isSelected: false },
   ];
 
   return (
-    <div className="bg-[#f7f7f7] flex flex-row justify-center w-full">
-      <div className="bg-white overflow-hidden w-[360px] min-h-screen">
-        <div className="relative w-[360px] min-h-screen">
-          {/* Header */}
-          <div className="bg-white px-5 py-6">
-            <div className="flex items-center mb-4">
-              <Button variant="ghost" size="sm" className="p-0 mr-3" onClick={() => navigate(-1)}>
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </Button>
-            </div>
-            <p className="text-gray-500 text-xs uppercase tracking-wide">// ALL SESSIONS</p>
-          </div>
+    <PageScroller>
+      <Screen>
+        {/* Header */}
+        <Header>
+          <BackRow>
+            <BackBtn onClick={() => navigate(-1)} aria-label="Back">
+              <ArrowLeft size={20} color="#4b5563" />
+            </BackBtn>
+          </BackRow>
+          <HeaderTag>// ALL SESSIONS</HeaderTag>
+        </Header>
 
-          {/* Session Categories Tabs */}
-          <div className="bg-white px-5 pb-4">
-            <div className="flex">
-              <button
-                onClick={() => setActiveTab('upcoming')}
-                className={`flex-1 text-center py-2 font-medium text-sm ${
-                  activeTab === 'upcoming' 
-                    ? 'text-black border-b-2 border-black' 
-                    : 'text-gray-500'
-                }`}
-              >
-                UPCOMING
-              </button>
-              <button
-                onClick={() => setActiveTab('completed')}
-                className={`flex-1 text-center py-2 font-medium text-sm ${
-                  activeTab === 'completed' 
-                    ? 'text-black border-b-2 border-black' 
-                    : 'text-gray-500'
-                }`}
-              >
-                COMPLETED
-              </button>
-            </div>
-          </div>
+        {/* Tabs */}
+        <TabsBar>
+          <Tabs>
+            <TabBtn $active={activeTab === "upcoming"} onClick={() => setActiveTab("upcoming")}>
+              UPCOMING
+            </TabBtn>
+            <TabBtn $active={activeTab === "completed"} onClick={() => setActiveTab("completed")}>
+              COMPLETED
+            </TabBtn>
+          </Tabs>
+        </TabsBar>
 
-          {/* Date Picker */}
-          <div className="bg-white px-5 pb-6">
-            <div className="flex gap-3 overflow-x-auto">
-              {calendarDates.map((date, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedDate(date.day)}
-                  className={`flex-shrink-0 p-3 rounded text-center ${
-                    date.isSelected 
-                      ? 'border-2 border-red-500' 
-                      : 'border border-gray-200'
-                  }`}
-                >
-                  <div className={`text-xs font-medium mb-1 ${
-                    date.isSelected ? 'text-red-500' : 'text-gray-600'
-                  }`}>
-                    {date.month}
-                  </div>
-                  <div className={`text-xl font-bold mb-1 ${
-                    date.isSelected ? 'text-red-500' : 'text-black'
-                  }`}>
-                    {date.day}
-                  </div>
-                  <div className={`text-xs font-medium ${
-                    date.isSelected ? 'text-red-500' : 'text-gray-600'
-                  }`}>
-                    {date.weekday}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Date Picker */}
+        <DatePickerWrap>
+          <DateScroller>
+            {calendarDates.map((d, i) => (
+              <DateBtn key={i} $selected={selectedDate === d.day} onClick={() => setSelectedDate(d.day)}>
+                <DateMonth $sel={selectedDate === d.day}>{d.month}</DateMonth>
+                <DateDay $sel={selectedDate === d.day}>{d.day}</DateDay>
+                <DateWeekday $sel={selectedDate === d.day}>{d.weekday}</DateWeekday>
+              </DateBtn>
+            ))}
+          </DateScroller>
+        </DatePickerWrap>
 
-          {/* Session List */}
-          <div className="bg-gray-100 flex-1 px-5 py-6">
-            <div className="space-y-3">
-              {activeTab === 'upcoming' && sessionsData.upcomingSessions.map((session) => (
-                <div key={session.id} className="bg-white rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/trainer/session-details')}>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="bg-gray-200 px-3 py-2 rounded">
-                        <span className="text-gray-600 text-sm font-medium">{session.date}</span>
-                      </div>
-                      <div className="text-right flex-1 ml-4">
-                        <div className="text-gray-600 text-sm">{session.time}</div>
-                        <div className="text-black font-medium text-sm">{session.participant}</div>
-                      </div>
-                    </div>
-                    
-                    {session.isHighlighted && session.countdown && (
-                      <div className="bg-green-600 text-white px-3 py-2 mt-3 rounded flex items-center justify-between">
-                        <span className="text-sm">Session starts in</span>
-                        <div className="flex items-center">
-                          <div className="w-4 h-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-2">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
-                          <span className="text-sm font-medium">{session.countdown}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+        {/* List */}
+        <ListSection>
+          <StackY>
+            {activeTab === "upcoming" &&
+              sessionsData.upcomingSessions.map((session) => {
+                const [m, d] = session.date.split(" ");
+                return (
+                  <SessionCardItem
+                    key={session.id}
+                    month={m}
+                    day={d}
+                    time={session.time}
+                    participant={session.participant}
+                    countdown={session.countdown ?? undefined} // hides bar when null/empty
+                    layout="column"
+                    onClick={() => navigate("/trainer/session-details")}
+                  />
+                );
+              })}
 
-              {activeTab === 'completed' && sessionsData.completedSessions.map((session) => (
-                <div key={session.id} className="bg-white rounded-lg overflow-hidden opacity-75">
-                  <div className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="bg-gray-200 px-3 py-2 rounded">
-                        <span className="text-gray-600 text-sm font-medium">{session.date}</span>
-                      </div>
-                      <div className="text-right flex-1 ml-4">
-                        <div className="text-gray-600 text-sm">{session.time}</div>
-                        <div className="text-black font-medium text-sm">{session.participant}</div>
-                        <div className="text-green-600 font-bold text-sm mt-1">
-                          Earned: {session.earnings}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {activeTab === "completed" &&
+              sessionsData.completedSessions.map((session) => {
+                const [m, d] = session.date.split(" ");
+                return (
+                  <SessionCardItem
+                    key={session.id}
+                    month={m}
+                    day={d}
+                    time={session.time}
+                    participant={session.participant}
+                    layout="column"
+                    // extraLine={{ text: `Earned: ${session.earnings}`, color: "#16a34a" }}
+                    onClick={() => navigate("/trainer/session-details")}
+                  />
+                );
+              })}
+          </StackY>
 
-            {/* Empty State */}
-            {activeTab === 'upcoming' && sessionsData.upcomingSessions.length === 0 && (
-              <div className="text-center py-12">
-                <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="font-medium text-gray-900 text-base mb-2">No upcoming sessions</h3>
-                <p className="text-gray-500 text-sm">You don't have any upcoming sessions scheduled.</p>
-              </div>
-            )}
+          {/* Empty States */}
+          {activeTab === "upcoming" && sessionsData.upcomingSessions.length === 0 && (
+            <EmptyState>
+              <Calendar size={48} color="#9ca3af" />
+              <div style={{ marginTop: 12, fontWeight: 600, color: "#111827" }}>No upcoming sessions</div>
+              <div style={{ fontSize: 14, marginTop: 4 }}>You don't have any upcoming sessions scheduled.</div>
+            </EmptyState>
+          )}
 
-            {activeTab === 'completed' && sessionsData.completedSessions.length === 0 && (
-              <div className="text-center py-12">
-                <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <h3 className="font-medium text-gray-900 text-base mb-2">No completed sessions</h3>
-                <p className="text-gray-500 text-sm">You haven't completed any sessions yet.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+          {activeTab === "completed" && sessionsData.completedSessions.length === 0 && (
+            <EmptyState>
+              <Calendar size={48} color="#9ca3af" />
+              <div style={{ marginTop: 12, fontWeight: 600, color: "#111827" }}>No completed sessions</div>
+              <div style={{ fontSize: 14, marginTop: 4 }}>You haven't completed any sessions yet.</div>
+            </EmptyState>
+          )}
+        </ListSection>
+      </Screen>
+    </PageScroller>
   );
 };
 

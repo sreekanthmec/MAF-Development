@@ -1,27 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PrimaryButton, SecondaryButton } from "../components/Button";
-import TrainerListItem from "../components/TrainerListItem";
-import SessionItem from "../components/SessionItem";
-import Title from "../components/Title";
 import CreditsBalance from "../components/CreditBalance";
+import Title from "../components/Title";
+import SessionItem from "../components/SessionItem";
+import TrainerListItem from "../components/TrainerListItem";
+import { SecondaryButton } from "../components/Button";
 
-const Home = () => {
+export default function Home() {
   const navigate = useNavigate();
 
   const upcomingSessions = [
-    {
-      date: "AUG 12",
-      time: "10:00 AM - 11:00 AM",
-      trainer: "Takeru Segawa",
-      sessionIn: "2d 4h 30m",
-    },
-    {
-      date: "AUG 13",
-      time: "9:00 AM - 10:00 AM",
-      trainer: "Helena Padilla",
-      sessionIn: "1d 6h 10m",
-    },
+    { date: "AUG 12", time: "10:00 AM - 11:00 AM", trainer: "Takeru Segawa", sessionIn: "2d 4h 30m" },
+    { date: "AUG 13", time: "9:00 AM - 10:00 AM", trainer: "Helena Padilla", sessionIn: "1d 6h 10m" },
   ];
 
   const trainers = [
@@ -34,7 +24,7 @@ const Home = () => {
         { day: "Friday", time: "Busy" },
       ],
       weeklySchedule: ["9AM - 10AM", "10AM - 11AM", "11AM - 12PM"],
-      imageUrl: require("../assets/trainer.png"), // Ensure image path is correct
+      imageUrl: require("../assets/trainer.png"),
     },
     {
       name: "Takeru Segawa",
@@ -45,218 +35,171 @@ const Home = () => {
         { day: "Friday", time: "Busy" },
       ],
       weeklySchedule: ["9AM - 10AM", "10AM - 11AM", "11AM - 12PM"],
-      imageUrl: require("../assets/trainer.png"), // Ensure image path is correct
+      imageUrl: require("../assets/trainer.png"),
     },
   ];
 
   const completedSessions = [
-    {
-      date: "AUG 12",
-      time: "10:00 AM - 11:00 AM",
-      trainer: "Lazar Amigano",
-    },
-    {
-      date: "AUG 11",
-      time: "9:00 AM - 10:00 AM",
-      trainer: "Takeru Segawa",
-    },
+    { date: "AUG 12", time: "10:00 AM - 11:00 AM", trainer: "Lazar Amigano" },
+    { date: "AUG 11", time: "9:00 AM - 10:00 AM", trainer: "Takeru Segawa" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="relative h-60 bg-gradient-to-b from-[#3A3A3A] to-[#252525] mb-6 overflow-hidden">
-        <div className="flex justify-between items-center p-4 relative z-10">
-          <div
-            onClick={() => navigate("/profile")}
-            className="flex items-center"
-          >
-            <div className="h-12 w-12">
-              <svg
-                width="36"
-                height="36"
-                viewBox="0 0 36 36"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+    // Make ONE full-viewport scroll container
+    <div className="h-[100dvh] w-full bg-[#F2F2F2] overflow-y-auto">
+      {/* Constrain to your 400px shell */}
+      <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
+        {/* Header */}
+        <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)]">
+          <div className="px-5 pt-5 pb-16 relative z-10">
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => navigate("/profile")}
+                className="flex items-center gap-2"
+                aria-label="Profile"
               >
-                {/* Profile Icon SVG */}
-                <rect x="0.5" y="0.5" width="35" height="35" fill="#252525" />
-                <rect
-                  x="0.5"
-                  y="0.5"
-                  width="35"
-                  height="35"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <rect
-                  x="0.5"
-                  y="0.5"
-                  width="35"
-                  height="35"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <rect
-                  x="0.5"
-                  y="0.5"
-                  width="35"
-                  height="35"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <rect
-                  x="0.5"
-                  y="0.5"
-                  width="35"
-                  height="35"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <rect
-                  x="0.5"
-                  y="0.5"
-                  width="35"
-                  height="35"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <rect x="0.5" y="0.5" width="35" height="35" stroke="#727272" />
-                <path
-                  d="M18 21C11 21 7.5 24 7.5 24V28.5H28.5V24C28.5 24 25 21 18 21Z"
-                  stroke="#B0B0B0"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M23 12.5C23 15.2614 20.7614 17.5 18 17.5C15.2386 17.5 13 15.2614 13 12.5C13 9.73858 15.2386 7.5 18 7.5C20.7614 7.5 23 9.73858 23 12.5Z"
-                  stroke="#B0B0B0"
-                  strokeWidth="2"
-                />
-              </svg>
+                <div className="h-9 w-9 grid place-items-center bg-[#252525] border border-[#727272]">
+                  <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
+                    <path d="M18 21C11 21 7.5 24 7.5 24V28.5H28.5V24C28.5 24 25 21 18 21Z" stroke="#B0B0B0" strokeWidth="2"/>
+                    <path d="M23 12.5C23 15.26 20.76 17.5 18 17.5C15.24 17.5 13 15.26 13 12.5C13 9.74 15.24 7.5 18 7.5C20.76 7.5 23 9.74 23 12.5Z" stroke="#B0B0B0" strokeWidth="2"/>
+                  </svg>
+                </div>
+                <div className="text-white">
+                  <div className="text-sm font-semibold leading-none">Ryuki</div>
+                </div>
+              </button>
+              <CreditsBalance balance={23} />
             </div>
-            <div className="ml-2 text-white">
-              <h2 className="text-lg font-bold">Ryuki</h2>
+
+            <div className="mt-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[32px] leading-none italic font-extrabold text-[#EB2726]">12</span>
+                <span className="text-white font-extrabold">SESSIONS</span>
+              </div>
+              <div className="text-[#B0B0B0] mt-1 text-sm">in last 30 days</div>
             </div>
           </div>
-          <CreditsBalance balance={23} />
-        </div>
-        <div className="absolute bottom-0 left-0 z-20 p-4">
-          <div className="flex items-baseline">
-            <h2 className="text-[30px] font-bold italic text-[#EB2726]">12</h2>
-            <p className="text-lg font-bold text-white ml-2">SESSIONS</p>
+
+          <div className="absolute top-0 right-0 opacity-50 pointer-events-none">
+            <svg width="157" height="213" viewBox="0 0 157 213" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M63.41 143.818H2L119.706 0H145.294L114.588 82.182H176L58.294 226H32.706L63.41 143.818Z"
+                fill="url(#g0)" stroke="url(#g1)" />
+              <defs>
+                <linearGradient id="g0" x1="89" y1="0" x2="89" y2="226" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#353535"/><stop offset="0.5" stopColor="#363636"/><stop offset="1" stopColor="#282828"/>
+                </linearGradient>
+                <linearGradient id="g1" x1="89" y1="0" x2="77.867" y2="191.929" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#333" stopOpacity="0.12"/><stop offset="0.5" stopColor="#3F3E3E"/><stop offset="1" stopColor="#333" stopOpacity="0.12"/>
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-          <p className="text-[#B0B0B0] mt-1">in last 30 days</p>
-        </div>
-        <div className="absolute top-0 right-0 opacity-50 pointer-events-none z-0">
-          <svg
-            width="157"
-            height="213"
-            viewBox="0 0 157 213"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M63.4118 143.818H2L119.706 0H145.294L114.588 82.1818H176L58.2941 226H32.7059L63.4118 143.818Z"
-              fill="url(#paint0_linear_1725_518)"
-              stroke="url(#paint1_linear_1725_518)"
-            />
-            <defs>
-              <linearGradient
-                id="paint0_linear_1725_518"
-                x1="89"
-                y1="0"
-                x2="89"
-                y2="226"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#353535" />
-                <stop offset="0.5" stopColor="#363636" />
-                <stop offset="1" stopColor="#282828" />
-              </linearGradient>
-              <linearGradient
-                id="paint1_linear_1725_518"
-                x1="89"
-                y1="0"
-                x2="77.8668"
-                y2="191.929"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#333333" stopOpacity="0.12" />
-                <stop offset="0.5" stopColor="#3F3E3E" />
-                <stop offset="1" stopColor="#333333" stopOpacity="0.12" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-      </header>
+        </header>
 
-      <section className="mb-4 p-6">
-        <Title text="// Upcoming Sessions" />
-        <div className="flex overflow-x-scroll space-x-4 mb-6">
-          {upcomingSessions.map((session, index) => (
-            <SessionItem
-              key={index}
-              date={session.date}
-              time={session.time}
-              trainer={session.trainer}
-              sessionIn={session.sessionIn}
-              isUpcoming={true}
-              showFooter={index === 0} // Show footer only on the first item
-            />
-          ))}
-        </div>
-        <SecondaryButton
-          label="VIEW ALL"
-          onClick={() => navigate("/session-history")}
-        />
-      </section>
-
-      {/* Explore Trainers Section */}
-      <section className="mb-4 p-6">
-        <Title text="// Explore Trainers" />
-        <div className="flex overflow-x-scroll space-x-4 mb-6">
-          {trainers.map((trainer, index) => (
-            <div key={index} className="flex-shrink-0 w-60">
-              <TrainerListItem
-                trainer={trainer}
-                onClick={() => navigate(`/trainer-details/${index}`)}
+        {/* Scrollable content */}
+        <main className="flex-1 pb-10">
+          {/* Upcoming */}
+          <section className="px-5 pt-6">
+            <Title text="// Upcoming Sessions" />
+            <div
+              className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory
+                         [-ms-overflow-style:none] [scrollbar-width:none]
+                         [&::-webkit-scrollbar]:hidden"
+            >
+              {upcomingSessions.map((s, i) => (
+                <div key={i} className="snap-start flex-shrink-0">
+                  <SessionItem
+                    date={s.date}
+                    time={s.time}
+                    trainer={s.trainer}
+                    sessionIn={s.sessionIn}
+                    isUpcoming
+                    showFooter={i === 0}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <SecondaryButton
+                label="VIEW ALL"
+                onClick={() => navigate("/session-history")}
+                className="!w-full"
               />
             </div>
-          ))}
-        </div>
-        <SecondaryButton
-          label="EXPLORE ALL"
-          onClick={() => navigate("/explore-trainers")}
-        />
-      </section>
+          </section>
 
-      <section className="mb-4 p-6">
-        <Title text="// Completed Sessions" />
-        <div className="flex overflow-x-scroll space-x-4 items-stretch mb-6">
-          {completedSessions.map((session, index) => (
-            <SessionItem
-              key={index}
-              date={session.date}
-              time={session.time}
-              trainer={session.trainer}
-              isUpcoming={false} // Set to false for completed sessions
-              showFooter={false} // No footer for completed sessions
-            />
-          ))}
-        </div>
-        <SecondaryButton
-          label="VIEW ALL"
-          onClick={() => navigate("/session-history")}
-        />
-      </section>
+          {/* Explore Trainers */}
+          <section className="px-5 pt-6">
+            <Title text="// Explore Trainers" />
+            <div
+              className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory
+                         [-ms-overflow-style:none] [scrollbar-width:none]
+                         [&::-webkit-scrollbar]:hidden"
+            >
+              {trainers.map((t, i) => (
+                <div key={i} className="snap-start flex-shrink-0 w-[260px]">
+                  <TrainerListItem
+                    trainer={t}
+                    onClick={() => navigate(`/trainer-details/${i}`)}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <SecondaryButton
+                label="EXPLORE ALL"
+                onClick={() => navigate("/explore-trainers")}
+                className="!w-full"
+              />
+            </div>
+          </section>
 
-      <footer className="mt-6">
-        <p className="text-gray-400 font-bold text-center">
-          Good Teachers Matter
-        </p>
-        <p>Talk with us</p>
-      </footer>
+          {/* Completed */}
+          <section className="px-5 pt-6">
+            <Title text="// Completed Sessions" />
+            <div
+              className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory
+                         [-ms-overflow-style:none] [scrollbar-width:none]
+                         [&::-webkit-scrollbar]:hidden items-stretch"
+            >
+              {completedSessions.map((s, i) => (
+                <div key={i} className="snap-start flex-shrink-0">
+                  <SessionItem
+                    date={s.date}
+                    time={s.time}
+                    trainer={s.trainer}
+                    isUpcoming={false}
+                    showFooter={false}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <SecondaryButton
+                label="VIEW ALL"
+                onClick={() => navigate("/session-history")}
+                className="!w-full"
+              />
+            </div>
+          </section>
+
+          {/* Footer */}
+          <section className="px-5 pt-8 pb-2">
+            <div className="text-center text-[#D1D1D1] font-extrabold italic tracking-wide">
+              GOOD TEACHERS MATTER
+            </div>
+            <button
+              onClick={() => navigate("/support")}
+              className="mt-4 mx-auto flex items-center gap-2 text-[#D62422] font-semibold"
+            >
+              <span className="inline-block w-4 h-4 rounded-full border border-[#D62422] grid place-items-center text-[10px] leading-none">
+                ?
+              </span>
+              <span>TALK WITH US</span>
+            </button>
+          </section>
+        </main>
+      </div>
     </div>
   );
-};
-
-export default Home;
+}

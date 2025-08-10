@@ -32,13 +32,14 @@ code {
 
 .app-container {
   width: 100%;
-  max-width: 360px; /* Example width for mobile screens */
+  max-width: 360px; /* Mobile container width */
   min-width: unset;
-  height: 100vh; /* Ensures the container height matches the viewport height */
+  min-height: 100vh; /* Ensures the container height matches the viewport height */
   margin: 0 auto; /* Center the container */
   background-color: #fff;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   overflow-y: auto; /* Adds scrolling if content exceeds the container height */
 }
 
@@ -46,12 +47,12 @@ code {
 body {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   background-color: #f7f7f7;
-  /* Remove overflow-y: hidden to allow scrolling if needed */
+  overflow-x: hidden;
 }
 
 /* Responsive design for mobile */

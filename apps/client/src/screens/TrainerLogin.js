@@ -1,159 +1,138 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { trainerLogin } from "../services/api";
 import styled, { createGlobalStyle } from "styled-components";
+import { trainerLogin } from "../services/api";
 import { PrimaryButton } from "../components/Button";
 import { TextInput } from "../components/InputComponents";
 
+/* ---------- constants ---------- */
+const APP_WIDTH = 400;         // canonical mobile width (px)
+const CARD_MIN_HEIGHT = 295;   // bottom card height baseline (px)
+
+/* ---------- fonts ---------- */
 const GlobalFonts = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Racing+Sans+One&family=Roboto+Flex:ital,wght@1,900&display=swap');
 `;
 
+/* ---------- background blur (only visible when screen > mobile width) ---------- */
 const BlurredBg = styled.div`
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
+  inset: 0;
   background: url('/image.png') center center / cover no-repeat;
   filter: blur(16px) brightness(0.8);
-  
-  @media (max-width: 768px) {
-    display: none; /* Hide blue effect on mobile */
+  z-index: 0;
+  display: none;
+
+  /* show blur whenever the viewport is wider than the app width */
+  @media (min-width: ${APP_WIDTH + 1}px) {
+    display: block;
   }
 `;
 
+/* ---------- center the mobile "phone" ---------- */
 const CenteredWrapper = styled.div`
   position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
-  overflow: auto;
-  
-  @media (max-width: 768px) {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
+  z-index: 1; /* above blur */
 `;
 
+/* ---------- mobile frame (always mobile width) ---------- */
 const MobileContainer = styled.div`
+  --app-width: ${APP_WIDTH}px;
+  --card-height: ${CARD_MIN_HEIGHT}px;
+
   position: relative;
-  width: 360px;
+  width: min(100vw, var(--app-width)); /* identical on phones & browser mobile view */
   min-height: 100vh;
+  margin: 0 auto;
+  overflow: hidden;
   background: transparent;
-  overflow-y: auto;
-  box-shadow: 0 0 32px 0 rgba(0,0,0,0.10);
-  display: flex;
-  flex-direction: column;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
-    min-height: auto;
-    box-shadow: none;
-    overflow: visible;
-  }
+  box-shadow: 0 0 32px rgba(0,0,0,0.10);
 `;
 
+/* ---------- top image fills down to the top of the card ---------- */
 const BackgroundImage = styled.div`
   position: absolute;
-  width: 632px;
-  height: 948px;
-  left: -136px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: url('/image.png');
-  background-size: cover;
-  background-position: center;
+  top: 0; left: 0; right: 0;
+  bottom: var(--card-height);   /* stops exactly where the card starts */
+  background: url('/image.png') center / cover no-repeat;
   z-index: 0;
-  
-  @media (max-width: 768px) {
-    display: none; /* Hide background image on mobile */
-  }
 `;
 
+/* ---------- header logo ---------- */
 const LogoBar = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 27px 20px;
   gap: 10px;
   position: absolute;
-  width: 360px;
+  width: 100%;
   height: 80px;
   left: 0;
   top: 0;
+  padding: 27px 20px;
   z-index: 2;
-  
-  @media (max-width: 768px) {
-    position: relative;
-    width: 100%;
-    height: auto;
-    padding: 20px;
-  }
 `;
-
 const LogoText = styled.div`
   font-family: 'Racing Sans One', sans-serif;
-  font-style: normal;
   font-weight: 400;
   font-size: 24px;
   line-height: 30px;
   color: #B0B0B0;
-  
-  @media (max-width: 768px) {
-    color: #333;
-  }
+`;
+
+/* ---------- big TRAIN / EARN ---------- */
+const ShoutBase = `
+  position: absolute;
+  font-family: 'Roboto Flex', sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 88px;
+  line-height: 110%;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  pointer-events: none; /* never block clicks */
+  z-index: 2;
 `;
 
 const TrainText = styled.div`
-  position: absolute;
-  width: 286px;
-  height: 97px;
-  left: -8px;
-  top: 356px;
-  font-family: 'Roboto Flex', sans-serif;
-  font-style: italic;
-  font-weight: 900;
-  font-size: 88px;
-  line-height: 110%;
-  letter-spacing: 0.08em;
+  ${ShoutBase}
   color: rgba(39, 39, 39, 0.6);
   -webkit-text-stroke: 2.7px #fff;
-  z-index: 2;
+  left: 16px;
+  top: 356px;
+
+  @media (max-width: ${APP_WIDTH}px) {
+    font-size: 56px;
+    top: 300px;
+  }
 `;
 
 const EarnText = styled.div`
-  position: absolute;
-  width: 247px;
-  height: 97px;
-  right: -8px;
-  top: 428px;
-  font-family: 'Roboto Flex', sans-serif;
-  font-style: italic;
-  font-weight: 900;
-  font-size: 88px;
-  line-height: 110%;
-  letter-spacing: 0.08em;
+  ${ShoutBase}
   color: #D62422;
-  z-index: 2;
+  right: 16px;  /* avoid negative offset to prevent clipping */
+  top: 428px;
+
+  @media (max-width: ${APP_WIDTH}px) {
+    font-size: 56px;
+    top: 370px;
+  }
 `;
 
+/* ---------- bottom form card (flat corners) ---------- */
 const LoginCard = styled.div`
   position: absolute;
   left: 0;
   bottom: 0;
-  width: 360px;
-  height: 295px;
+  width: 100%;                         /* exact same width as container/image */
+  min-height: var(--card-height);
   background: #fff;
-  box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
-  border-radius: 20px 20px 0 0;
-  padding: 24px 24px 28px 24px;
+  box-shadow: 0 4px 4px rgba(0,0,0,0.25);
+  border-radius: 0;
+  padding: 24px 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -165,16 +144,17 @@ const LoginContent = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 24px;
-  width: 312px;
+  width: calc(100% - 48px); /* padding-aware content width */
+  max-width: 312px;         /* keep nice line length */
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 12px;
-  width: 312px;
+  width: 100%;
+  max-width: 312px;
 `;
 
 const ErrorText = styled.div`
@@ -189,30 +169,34 @@ const Links = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  width: 221px;
+  width: 100%;
+  max-width: 221px;
   margin: 0 auto;
 `;
 const LinkNote = styled.div`
   font-family: 'Manrope', sans-serif;
-  font-style: normal;
   font-weight: 500;
   font-size: 12px;
   line-height: 14px;
   color: #717171;
   text-align: center;
 `;
-const LinkAction = styled.div`
+const LinkAction = styled.button`
+  border: 0;
+  background: transparent;
+  padding: 0;
   font-family: 'Manrope', sans-serif;
-  font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 120%;
   color: #000;
   text-align: center;
   cursor: pointer;
+  text-decoration: underline;
 `;
 
-const TrainerLogin = ({ role = "trainer" }) => {
+/* ---------- component ---------- */
+const TrainerLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -221,40 +205,52 @@ const TrainerLogin = ({ role = "trainer" }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail || !trimmedPassword) {
       setError("Please enter both email and password");
       return;
     }
+
     setLoading(true);
     setError("");
+
     try {
-      const response = await trainerLogin(email, password);
+      const response = await trainerLogin(trimmedEmail, trimmedPassword);
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("userRole", "trainer");
-      setLoading(false);
       navigate("/trainer/dashboard");
-    } catch (error) {
+    } catch (err) {
       setError("Invalid email or password");
+    } finally {
       setLoading(false);
     }
   };
 
   const handleContactUs = () => {
-    alert("Contact us at support@maf.com to sign up as a trainer");
+    window.location.href = "mailto:support@maf.com?subject=Trainer%20Sign%20Up";
   };
 
   return (
     <>
       <GlobalFonts />
+      {/* Full-screen blur (only on > mobile width) */}
       <BlurredBg />
+
       <CenteredWrapper>
+        {/* Always renders as a mobile-width app */}
         <MobileContainer>
           <BackgroundImage />
+
           <LogoBar>
             <LogoText>MAF</LogoText>
           </LogoBar>
+
           <TrainText>TRAIN</TrainText>
           <EarnText>EARN</EarnText>
+
           <LoginCard>
             <LoginContent>
               <Form onSubmit={handleLogin}>
@@ -262,23 +258,27 @@ const TrainerLogin = ({ role = "trainer" }) => {
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  type="text"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
                 />
                 <TextInput
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   type="password"
+                  autoComplete="current-password"
                 />
+
                 {error && <ErrorText>{error}</ErrorText>}
-                <div style={{ width: '100%' }}>
-                  <PrimaryButton
-                    label={loading ? "LOGGING IN..." : "LOGIN"}
-                    onClick={handleLogin}
-                    disabled={loading}
-                  />
-                </div>
+
+                <PrimaryButton
+                  label={loading ? "LOGGING IN..." : "LOGIN"}
+                  type="submit"
+                  disabled={loading}
+                />
               </Form>
+
               <Links>
                 <LinkNote>Don’t have an account?</LinkNote>
                 <LinkAction onClick={handleContactUs}>
@@ -293,4 +293,4 @@ const TrainerLogin = ({ role = "trainer" }) => {
   );
 };
 
-export default TrainerLogin; 
+export default TrainerLogin;

@@ -1,134 +1,112 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { validateOtp } from "../services/api";
 import BackIcon from "../components/BackIcon";
 import { PrimaryButton } from "../components/Button";
-import OtpView from "../components/OtpView"; // Import the OtpView component
+import OtpView from "../components/OtpView";
 import styled from "styled-components";
 
 const HeaderText = styled.h1`
   width: 100%;
   font-family: "Manrope", sans-serif;
-  font-style: normal;
   font-weight: 700;
   font-size: 20px;
-  flex: none;
-  order: 0;
-  flex-grow: 0;
   padding-left: 20px;
+  margin-bottom: 6px;
 `;
 
-const CountdownContainer = styled.div`
+const CountdownRow = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 20px;
   gap: 6px;
-  margin-top: 0px; /* Add space above the countdown timer */
+  padding: 16px 20px 0;
 `;
 
-const CountdownText = styled.p`
-  font-family: "Manrope", sans-serif;
-  font-style: normal;
-  font-weight: ${(props) => (props.$bold ? "800" : "500")};
-  font-size: 12px;
+const Small = styled.p`
   margin: 0;
-  width: ${(props) => (props.$bold ? "36px" : "87px")};
+  font-family: "Manrope", sans-serif;
+  font-weight: ${(p) => (p.$bold ? 800 : 500)};
+  font-size: 12px;
 `;
 
-const OtpVerification = ({ role = "student" }) => {
-  const [otp, setOtp] = useState(["", "", "", ""]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [timer, setTimer] = useState(30);
+export default function OtpVerification({ role = "student" }) {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { countryCode, mobileNumber, role: stateRole } = state || {};
-  
-  // Use role from props if not available in state
   const currentRole = stateRole || role;
 
-  useEffect(() => {
-    const countdown = setInterval(() => {
-      if (timer > 0) {
-        setTimer((prevTimer) => prevTimer - 1);
-      }
-    }, 1000);
+  const OTP_LENGTH = 4; // ← 4 digits
+  const [otp, setOtp] = useState(Array.from({ length: OTP_LENGTH }, () => ""));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [timer, setTimer] = useState(30);
 
-    return () => clearInterval(countdown);
-  }, [timer]);
+  useEffect(() => {
+    const id = setInterval(() => setTimer((t) => (t > 0 ? t - 1 : 0)), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const clearError = () => setError("");
 
   const handleVerifyOtp = async () => {
-    const otpCode = otp.join("");
-    if (otpCode.length !== 4) {
-      setError("Please enter a 4-digit OTP");
+    const code = otp.join("");
+    if (code.length !== OTP_LENGTH) {
+      setError(`Please enter a ${OTP_LENGTH}-digit OTP`);
       return;
     }
-
     setLoading(true);
     try {
-      const response = await validateOtp(countryCode, mobileNumber, otpCode, currentRole);
-      
-      // Store the user role in localStorage for ProtectedRoute
+      await validateOtp(countryCode, mobileNumber, code, currentRole);
       localStorage.setItem("userRole", currentRole);
-      
-      // Add a small delay to ensure localStorage is set
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      setLoading(false);
-      
-      // Navigate based on role
-      if (currentRole === "student") {
-        navigate("/student/basic-details1");
-      } else {
-        navigate("/trainer/dashboard");
-      }
-    } catch (error) {
+      navigate(currentRole === "student" ? "/student/basic-details1" : "/trainer/dashboard");
+    } catch {
       setError("Failed to verify OTP. Please try again.");
+    } finally {
       setLoading(false);
     }
-  };
-
-  const clearError = () => {
-    setError("");
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 relative">
-      <header className="flex justify-start items-start mb-4 w-full p-4">
-        <BackIcon />
-      </header>
-      <div className="w-full bg-white p-6">
-        <HeaderText>Enter OTP sent to</HeaderText>
-        <HeaderText>
-          +{countryCode} {mobileNumber}
-        </HeaderText>
+    <div className="min-h-screen w-full bg-white">
+      <div className="mx-auto max-w-[400px] min-h-screen flex flex-col">
+        {/* top */}
+        <header className="p-4">
+          <BackIcon />
+        </header>
 
-        <OtpView
-          otp={otp}
-          setOtp={setOtp}
-          error={error}
-          clearError={clearError}
-        />
+        {/* scrollable content (pad bottom so fixed bar doesn't overlap) */}
+        <main className="pb-28">
+          <HeaderText>Enter OTP sent to</HeaderText>
+          <HeaderText>
+            +{countryCode} {mobileNumber}
+          </HeaderText>
 
-        <CountdownContainer>
-          <CountdownText>Didn't Receive?</CountdownText>
-          <CountdownText $bold>{`00:${
-            timer < 10 ? `0${timer}` : timer
-          }`}</CountdownText>
-        </CountdownContainer>
+          <OtpView otp={otp} setOtp={setOtp} error={error} clearError={clearError} />
 
-        <div className="absolute bottom-0 left-0 w-full p-6 bg-white">
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <PrimaryButton
-            onClick={handleVerifyOtp}
-            disabled={loading}
-            label={loading ? "VERIFYING..." : "VERIFY"}
-          />
+          <CountdownRow>
+            <Small>Didn’t Receive?</Small>
+            <Small $bold>{`00:${String(timer).padStart(2, "0")}`}</Small>
+          </CountdownRow>
+
+          {error && (
+            <div className="px-5 pt-4">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+        </main>
+
+        {/* fixed bottom verify */}
+        {/* <div className="fixed inset-x-0 bottom-0 bg-white/95 backdrop-blur border-t"> */}
+          <div className="mx-auto max-w-[400px] px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+            <PrimaryButton
+              onClick={handleVerifyOtp}
+              disabled={loading}
+              label={loading ? "VERIFYING..." : "VERIFY"}
+              className="w-full"
+            />
+          </div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
-};
-
-export default OtpVerification;
+}
