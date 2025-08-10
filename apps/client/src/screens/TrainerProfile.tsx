@@ -275,7 +275,7 @@ export default function TrainerProfile() {
                 </Grid2>
 
                 {/* media blocks */}
-                // inside your JSX, replace the old media section with this:
+
 <div className="pt-5">
   <MediaList>
     {media.map((m, i) => {
