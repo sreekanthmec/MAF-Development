@@ -53,6 +53,7 @@ import EditAvailability from "./screens/EditAvailability";
 
 import RoleSelection from "./components/RoleSelection";
 import ProtectedRoute from "./components/ProtectedRoute";
+import useViewportHeight from "./hooks/useViewportHeight";
 
 import "./index.css";
 
@@ -119,6 +120,7 @@ const stripePromise = loadStripe(
 );
 
 function App() {
+  useViewportHeight();
   const location = useLocation();
   const pathname = location.pathname;
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole") || null);
