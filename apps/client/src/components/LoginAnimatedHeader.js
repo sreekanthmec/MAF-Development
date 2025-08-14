@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import styled, { keyframes, css } from "styled-components";
+import React, { useEffect, useRef, useState } from "react";
+import styled, { keyframes } from "styled-components";
 import "../index.css";
 
-// ✅ Static imports (no dynamic require)
+// Static imports so the bundler fingerprints & serves reliably in production
 import bgImg from "../assets/image-bg.png";
 import img1 from "../assets/image1.png";
 import img2 from "../assets/image2.png";
@@ -77,13 +77,16 @@ const LineText = styled.div`
   gap: 10px;
 `;
 
-const MainText = styled.div`
+const MainTextWhite = styled.div`
   font-family: "Cooper Hewitt", sans-serif;
   font-size: 32px;
   font-style: italic;
   font-weight: 714;
   line-height: 38.4px;
-  color: ${(p) => p.$color || "white"};
+  color: #ffffff;
+`;
+const MainTextRed = styled(MainTextWhite)`
+  color: #FA403F;
 `;
 
 const AnimatedTextContainer = styled.div`
@@ -94,10 +97,10 @@ const AnimatedTextContainer = styled.div`
   position: relative;
   left: 10%;
   will-change: transform;
-  ${(p) =>
-    p.$animate
-      ? css`animation: ${fastInSlowStayFastOut} 3s ease-in-out forwards;`
-      : css`opacity: 1; transform: none;`}
+
+  &.animate {
+    animation: ${fastInSlowStayFastOut} 3s ease-in-out forwards;
+  }
 `;
 
 const FirstNameText = styled.div`
@@ -110,7 +113,6 @@ const FirstNameText = styled.div`
   -webkit-text-stroke-color: #595959;
   text-transform: uppercase;
 `;
-
 const LastNameText = styled.div`
   font-family: "Cooper Hewitt", sans-serif;
   font-size: 52px;
@@ -130,83 +132,96 @@ const AnimatedImage = styled.img`
   bottom: 0;
   right: 5%;
   will-change: transform;
-  ${(p) =>
-    p.$animate
-      ? css`animation: ${fastInSlowStayFastOutImage} 3s ease-in-out forwards;`
-      : css`transform: none;`}
+  pointer-events: none;
+
+  &.animate {
+    animation: ${fastInSlowStayFastOutImage} 3s ease-in-out forwards;
+  }
 `;
 
 function preload(src) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = resolve;
-    img.onerror = resolve; // resolve even on error to avoid blocking
+    img.onerror = resolve; // resolve on error to avoid blocking forever
     img.src = src;
   });
 }
 
-const LoginAnimatedHeader = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [assetsReady, setAssetsReady] = useState(false);
-  const [cycle, setCycle] = useState(0); // 0 = first frame (no slide animation)
-  const currentItem = items[currentIndex];
-  const intervalRef = useRef(null);
+export default function LoginAnimatedHeader() {
+  const [ready, setReady] = useState(false); // assets & fonts ready
+  const [index, setIndex] = useState(0);
+  const [cycle, setCycle] = useState(0);
+  const timerRef = useRef(null);
 
-  // ✅ Preload background & first image before first render animation
+  // Preload background + first slide + fonts
   useEffect(() => {
     let mounted = true;
     (async () => {
-      await Promise.all([preload(bgImg), preload(items[0].image)]);
-      if (mounted) setAssetsReady(true);
-      // warm the rest too (non-blocking)
-      items.slice(1).forEach((i) => preload(i.image));
+      const fontReady =
+        document.fonts && document.fonts.ready
+          ? document.fonts.ready
+          : Promise.resolve();
+      await Promise.all([preload(bgImg), preload(img1), fontReady]);
+      if (!mounted) return;
+      // Give browser a frame to paint before animating
+      requestAnimationFrame(() => {
+        setReady(true);
+        // warm the rest (non-blocking)
+        preload(img2);
+        preload(img3);
+      });
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // ✅ Start cycling only after assets are ready
+  // Start cycling only when ready
   useEffect(() => {
-    if (!assetsReady) return;
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex((i) => (i + 1) % items.length);
+    if (!ready) return;
+    timerRef.current = setInterval(() => {
+      setIndex((i) => (i + 1) % items.length);
       setCycle((c) => c + 1);
     }, 3000);
-    return () => clearInterval(intervalRef.current);
-  }, [assetsReady]);
+    return () => clearInterval(timerRef.current);
+  }, [ready]);
 
-  const animate = useMemo(() => assetsReady && cycle > 0, [assetsReady, cycle]);
+  const animate = ready && cycle > 0;
+  const item = items[index];
 
   return (
     <GradientBackground>
-      <BackgroundImage src={bgImg} alt="Background" loading="eager" decoding="sync" />
+      <BackgroundImage src={bgImg} alt="" loading="eager" />
       <Logo>FitAny</Logo>
 
       <MainTextContainer>
         <LineText>
-          <MainText>TRAIN</MainText>
-          <MainText $color="#FA403F">ANYWHERE</MainText>
+          <MainTextWhite>TRAIN</MainTextWhite>
+          <MainTextRed>ANYWHERE</MainTextRed>
         </LineText>
         <LineText>
-          <MainText>WITH</MainText>
-          <MainText $color="#FA403F">PROS</MainText>
+          <MainTextWhite>WITH</MainTextWhite>
+          <MainTextRed>PROS</MainTextRed>
         </LineText>
       </MainTextContainer>
 
-      <AnimatedTextContainer $animate={animate} key={`${currentItem.firstName}-${currentItem.lastName}`}>
-        <FirstNameText>{currentItem.firstName}</FirstNameText>
-        <LastNameText>{currentItem.lastName}</LastNameText>
+      {/* First render shows the elements without animation;
+          animation starts from the 2nd cycle only. */}
+      <AnimatedTextContainer
+        className={animate ? "animate" : ""}
+        key={item.firstName + item.lastName}
+      >
+        <FirstNameText>{item.firstName}</FirstNameText>
+        <LastNameText>{item.lastName}</LastNameText>
       </AnimatedTextContainer>
 
       <AnimatedImage
-        src={currentItem.image}
-        alt={currentItem.firstName}
-        key={currentItem.image}
+        className={animate ? "animate" : ""}
+        src={item.image}
+        alt={item.firstName}
         loading="eager"
-        decoding="async"
-        $animate={animate}
       />
     </GradientBackground>
   );
-};
-
-export default LoginAnimatedHeader;
+}
