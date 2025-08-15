@@ -4,7 +4,8 @@ import CreditsBalance from "../components/CreditBalance";
 import Title from "../components/Title";
 import SessionItem from "../components/SessionItem";
 import TrainerListItem from "../components/TrainerListItem";
-import { SecondaryButton } from "../components/Button";
+import { TertiaryButton } from "../components/Button";
+import { ReactComponent as SupportIcon } from "../assets/icon_whatsapp.svg";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function Home() {
       <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
         {/* Header */}
         <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)]">
-          <div className="px-5 pt-5 pb-16 relative z-10">
+          <div className="px-5 pt-5 relative z-10">
             <div className="flex items-center justify-between">
               <button
                 onClick={() => navigate("/profile")}
@@ -60,21 +61,21 @@ export default function Home() {
               >
                 <div className="h-9 w-9 grid place-items-center bg-[#252525] border border-[#727272]">
                   <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
-                    <path d="M18 21C11 21 7.5 24 7.5 24V28.5H28.5V24C28.5 24 25 21 18 21Z" stroke="#B0B0B0" strokeWidth="2"/>
-                    <path d="M23 12.5C23 15.26 20.76 17.5 18 17.5C15.24 17.5 13 15.26 13 12.5C13 9.74 15.24 7.5 18 7.5C20.76 7.5 23 9.74 23 12.5Z" stroke="#B0B0B0" strokeWidth="2"/>
+                    <path d="M18 21C11 21 7.5 24 7.5 24V28.5H28.5V24C28.5 24 25 21 18 21Z" stroke="#B0B0B0" strokeWidth="2" />
+                    <path d="M23 12.5C23 15.26 20.76 17.5 18 17.5C15.24 17.5 13 15.26 13 12.5C13 9.74 15.24 7.5 18 7.5C20.76 7.5 23 9.74 23 12.5Z" stroke="#B0B0B0" strokeWidth="2" />
                   </svg>
                 </div>
                 <div className="text-white">
-                  <div className="text-sm font-semibold leading-none">Ryuki</div>
+                  <div className="text-sm font-semibold leading-none">Kishan P</div>
                 </div>
               </button>
               <CreditsBalance balance={23} />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-20 mb-6">
               <div className="flex items-baseline gap-2">
                 <span className="text-[32px] leading-none italic font-extrabold text-[#EB2726]">12</span>
-                <span className="text-white font-extrabold">SESSIONS</span>
+                <span className="text-white italic font-extrabold">SESSIONS</span>
               </div>
               <div className="text-[#B0B0B0] mt-1 text-sm">in last 30 days</div>
             </div>
@@ -86,10 +87,10 @@ export default function Home() {
                 fill="url(#g0)" stroke="url(#g1)" />
               <defs>
                 <linearGradient id="g0" x1="89" y1="0" x2="89" y2="226" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#353535"/><stop offset="0.5" stopColor="#363636"/><stop offset="1" stopColor="#282828"/>
+                  <stop stopColor="#353535" /><stop offset="0.5" stopColor="#363636" /><stop offset="1" stopColor="#282828" />
                 </linearGradient>
                 <linearGradient id="g1" x1="89" y1="0" x2="77.867" y2="191.929" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#333" stopOpacity="0.12"/><stop offset="0.5" stopColor="#3F3E3E"/><stop offset="1" stopColor="#333" stopOpacity="0.12"/>
+                  <stop stopColor="#333" stopOpacity="0.12" /><stop offset="0.5" stopColor="#3F3E3E" /><stop offset="1" stopColor="#333" stopOpacity="0.12" />
                 </linearGradient>
               </defs>
             </svg>
@@ -120,8 +121,9 @@ export default function Home() {
               ))}
             </div>
             <div className="mt-4">
-              <SecondaryButton
+              <TertiaryButton
                 label="VIEW ALL"
+                layout="split"
                 onClick={() => navigate("/session-history")}
                 className="!w-full"
               />
@@ -129,7 +131,7 @@ export default function Home() {
           </section>
 
           {/* Explore Trainers */}
-          <section className="px-5 pt-6">
+          <section className="px-5 pt-12">
             <Title text="// Explore Trainers" />
             <div
               className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory
@@ -146,8 +148,9 @@ export default function Home() {
               ))}
             </div>
             <div className="mt-4">
-              <SecondaryButton
+              <TertiaryButton
                 label="EXPLORE ALL"
+                layout="split"
                 onClick={() => navigate("/explore-trainers")}
                 className="!w-full"
               />
@@ -155,7 +158,7 @@ export default function Home() {
           </section>
 
           {/* Completed */}
-          <section className="px-5 pt-6">
+          <section className="px-5 pt-12">
             <Title text="// Completed Sessions" />
             <div
               className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory
@@ -175,8 +178,9 @@ export default function Home() {
               ))}
             </div>
             <div className="mt-4">
-              <SecondaryButton
+              <TertiaryButton
                 label="VIEW ALL"
+                layout="split"
                 onClick={() => navigate("/session-history")}
                 className="!w-full"
               />
@@ -185,16 +189,16 @@ export default function Home() {
 
           {/* Footer */}
           <section className="px-5 pt-8 pb-2">
-            <div className="text-center text-[#D1D1D1] font-extrabold italic tracking-wide">
+            <div className="text-left text-[#D1D1D1] font-extrabold italic tracking-wide">
               GOOD TEACHERS MATTER
             </div>
+
             <button
               onClick={() => navigate("/support")}
-              className="mt-4 mx-auto flex items-center gap-2 text-[#D62422] font-semibold"
+              className="mt-4 flex items-center gap-2 text-[#D62422] font-semibold"
+              aria-label="Talk with us"
             >
-              <span className="inline-block w-4 h-4 rounded-full border border-[#D62422] grid place-items-center text-[10px] leading-none">
-                ?
-              </span>
+              <SupportIcon className="w-5 h-5 flex-shrink-0" />
               <span>TALK WITH US</span>
             </button>
           </section>

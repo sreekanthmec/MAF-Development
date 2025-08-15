@@ -12,10 +12,10 @@ export default function BasicDetails1() {
 
   // mock coming from API
   const userProfile = {
-    name: "test student",
+    name: "",
     age: 30,
     sex: "Male",
-    experience: "Intermediate",
+    experience: "Beginner",
   };
 
   const [name, setName] = useState("");

@@ -43,7 +43,7 @@ const TrainerListItem = ({ trainer, isWeekly }) => {
             <span className="ml-2 text-white">{trainer.age}F</span>
           </div>
         </div>
-        <div className="absolute right-4 bottom-0">
+        <div className="absolute right-[0px] bottom-0">
           <img
             src={require("../assets/trainer.png")}
             alt={trainer.name}

@@ -1,62 +1,58 @@
 import React from "react";
 
-const SessionItem = ({
-  date,
+/**
+ * Design notes:
+ * - Left column: Month/Day block (80x80), light gray background, 1px right border
+ * - Right: time (muted), trainer name (bold, uppercase)
+ * - Optional bottom red bar when upcoming + showFooter, “Session starts in …”
+ * - Width: 280px (w-70) so two cards look balanced in the scroller
+ */
+export default function SessionItem({
+  date,        // e.g. "AUG 12"
   time,
   trainer,
   sessionIn,
   isUpcoming,
   showFooter,
-}) => {
+}) {
+  const [month = "", day = ""] = String(date).split(" ");
+
   return (
     <div
-      className="bg-white rounded-none overflow-hidden flex-shrink-0 w-64 mr-4"
+      className="bg-white overflow-hidden flex-shrink-0 w-[280px]"
       style={{
         border: "1px solid #DEDEDE",
-        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        height: showFooter ? "auto" : "100px", // Explicit height when no footer
-        minHeight: "100px", // Ensure minimum height
+        boxShadow: "0px 4px 6px rgba(0,0,0,0.10)",
       }}
     >
+      {/* head row */}
       <div className="flex">
-        <div className="bg-[#F7F7F7] p-4 flex flex-col justify-center items-center">
-          <p className="text-lg font-bold">{date}</p>
+        {/* date block */}
+        <div className="w-20 h-20 bg-[#F7F7F7] border-r border-[#DEDEDE] grid grid-rows-2 place-items-center">
+          <div className="font-extrabold text-[12px] tracking-[0.05em] text-[#2D2D2D]">
+            {month}
+          </div>
+          <div className="font-bold text-[24px] text-[#2D2D2D] leading-none">
+            {day}
+          </div>
         </div>
+
+        {/* info */}
         <div className="p-4 flex-1">
-          <p className="text-sm text-gray-500">{time}</p>
-          <p className="text-lg font-bold">{trainer}</p>
+          <p className="text-sm text-[#717171] leading-[18px]">{time}</p>
+          <p className="text-base font-extrabold text-[#2D2D2D] uppercase mt-1">
+            {trainer}
+          </p>
         </div>
       </div>
+
+      {/* countdown */}
       {isUpcoming && showFooter && (
-        <div className="bg-[#EB2726] p-2 text-white flex justify-between items-center">
-          <span>Session starts in</span>
-          <span className="flex items-center">
-            <svg
-              className="w-4 h-4 mr-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 8v4l3 3"
-              ></path>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 20V4m8 4v8H4V8"
-              ></path>
-            </svg>
-            {sessionIn}
-          </span>
+        <div className="bg-[#EB2726] px-4 h-8 text-white flex items-center justify-between">
+          <span className="text-[12px]">Session starts in</span>
+          <span className="text-[12px] font-bold">{sessionIn}</span>
         </div>
       )}
     </div>
   );
-};
-
-export default SessionItem;
+}
