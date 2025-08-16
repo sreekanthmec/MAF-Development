@@ -51,7 +51,7 @@ export default function Home() {
       {/* Constrain to your 400px shell */}
       <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
         {/* Header */}
-        <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)]">
+        <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)] pt-8">
           <div className="px-5 pt-5 relative z-10">
             <div className="flex items-center justify-between">
               <button
