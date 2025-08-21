@@ -1,160 +1,229 @@
+// src/screens/BuyCredits.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loadStripe } from "@stripe/stripe-js";
 import BackIcon from "../components/BackIcon";
-import { PrimaryButton } from "../components/Button";
-import { SingleInput } from "../components/InputComponents";
+import { PrimaryButton, TertiaryButton } from "../components/Button";
 
-const stripePromise = loadStripe(
-  "pk_test_51PpktVDR2pvMyQSx1nuDphfPYavVb5gH06T3bHMjQdwCUECtN2f6TSXjknsR9wZBrBn3GV4XzHOhSZDebg0dbAfO00mSx8xUcg"
-); // Your Stripe publishable key
+/* small inline icon */
+const Bolt = ({ className = "" }) => (
+  <svg className={className} width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <path
+      d="M8 13H3L13 1h3l-3 8h6L12 23H9l3-10H8Z"
+      stroke="#F4C505"
+      strokeWidth="2"
+      fill="none"
+    />
+  </svg>
+);
 
-const BuyCredits = () => {
+/* Result modal */
+function PaymentResultModal({
+  open,
+  type, // "success" | "failure"
+  remainingCredits,
+  onClose,
+  onRetry,
+  onBook,
+}) {
+  if (!open) return null;
+
+  const isSuccess = type === "success";
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/40 grid place-items-center px-5">
+      <div className="w-full max-w-[400px] bg-white p-6 shadow-xl">
+        {/* top divider */}
+        <div className="w-14 h-[3px] mx-auto bg-[#E6E6E6] rounded mb-8" />
+        <div className="grid place-items-center gap-4">
+          {/* Icon */}
+          {isSuccess ? (
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <rect x="18" y="14" width="28" height="28" stroke="#269347" strokeWidth="3" />
+              <path d="M26 29l6 6 10-12" stroke="#269347" strokeWidth="4" fill="none" />
+              <rect x="24" y="20" width="28" height="28" stroke="#269347" strokeWidth="3" />
+            </svg>
+          ) : (
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <rect x="18" y="14" width="28" height="28" stroke="#B9452F" strokeWidth="3" />
+              <path d="M26 26l14 14M40 26L26 40" stroke="#B9452F" strokeWidth="4" />
+              <rect x="24" y="20" width="28" height="28" stroke="#B9452F" strokeWidth="3" />
+            </svg>
+          )}
+
+          <div
+            className={`text-[18px] font-bold ${
+              isSuccess ? "text-[#269347]" : "text-[#B9452F]"
+            }`}
+          >
+            {isSuccess ? "+ Credits added" : "Oops! Payment Failed"}
+          </div>
+
+          {isSuccess ? (
+            <div className="w-full border border-[#DEDEDE] px-4 py-3 flex items-center justify-between">
+              <span className="text-[#8F9098]">Remaining Credits</span>
+              <span className="flex items-center gap-2">
+                <Bolt />
+                <span className="font-extrabold">{remainingCredits}</span>
+              </span>
+            </div>
+          ) : null}
+
+          <div className="w-full mt-4">
+            {isSuccess ? (
+              <PrimaryButton
+                label="BOOK TRAINER"
+                onClick={onBook}
+                className="!w-full"
+              />
+            ) : (
+              <>
+                <PrimaryButton label="RETRY" onClick={onRetry} className="!w-full" />
+                <TertiaryButton
+                  label="CONTACT SUPPORT"
+                  layout="split"
+                  onClick={onClose}
+                  className="!w-full mt-3"
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BuyCredits() {
   const navigate = useNavigate();
-  const [credits, setCredits] = useState(10);
-  const [isProcessing, setIsProcessing] = useState(false);
 
-  const creditCost = 30; // Assume each credit costs $30
-  const totalCost = credits * creditCost * 100; // Stripe works with the smallest currency unit (e.g., cents)
+  // UI state
+  const [credits, setCredits] = useState(10);
+  const creditCost = 30; // $/credit
+  const totalCost = credits * creditCost;
+
+  // fake remaining for success modal
+  const [remainingCredits, setRemainingCredits] = useState(100);
+
+  // modal state
+  const [result, setResult] = useState(null); // "success" | "failure" | null
+  const [processing, setProcessing] = useState(false);
+
+  const quickPicks = [20, 50, 100, 250];
+
+  const dec = () => setCredits((c) => Math.max(1, c - 1));
+  const inc = () => setCredits((c) => c + 1);
 
   const handlePay = async () => {
-    setIsProcessing(true);
+    setProcessing(true);
 
-    try {
-      // Create a Checkout Session on the server
-      const response = await fetch(
-        "http://localhost:3002/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ amount: totalCost }),
-        }
-      );
-
-      const { id } = await response.json();
-
-      // Load the Stripe object
-      const stripe = await stripePromise;
-
-      if (!stripe) {
-        console.error("Stripe.js failed to load.");
-        return;
+    // simulate a short processing delay then randomly show success/failure
+    setTimeout(() => {
+      const ok = Math.random() > 0.5;
+      if (ok) {
+        setRemainingCredits((prev) => prev + credits);
+        setResult("success");
+      } else {
+        setResult("failure");
       }
-
-      // Redirect to Stripe Checkout
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: id,
-      });
-
-      if (error) {
-        console.error(error);
-        alert("Payment failed");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("An error occurred");
-    } finally {
-      setIsProcessing(false);
-    }
+      setProcessing(false);
+    }, 700);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 relative">
-      <header className="flex items-center mb-4">
-        <BackIcon />
-      </header>
-
-      <section className="mb-4">
-        <h1 className="text-2xl font-bold mb-6">Buy Credits</h1>
-
-        <div className="flex justify-center items-center mb-4">
-          <button
-            onClick={() => setCredits(credits - 1)}
-            className="p-2 bg-[#EB2726] text-white rounded"
-            disabled={credits <= 1}
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M19 13H5V11H19V13Z" fill="white" />
-            </svg>
+    <div className="w-full bg-[#F7F7F7] min-h-[100dvh]">
+      {/* 400px app shell */}
+      <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
+        {/* Header */}
+        <header className="px-5 pt-4">
+          <button aria-label="Back" onClick={() => navigate(-1)} className="-ml-1">
+            <BackIcon />
           </button>
-          <span className="text-xl mx-4">{credits}</span>
-          <button
-            onClick={() => setCredits(credits + 1)}
-            className="p-2 bg-[#EB2726] text-white rounded"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"
-                fill="white"
-              />
-            </svg>
-          </button>
-        </div>
+          <h1 className="text-[24px] font-extrabold mt-6">Buy Credits</h1>
+        </header>
 
-        <SingleInput
-          label="Select Credit Amount"
-          options={[20, 50, 100, 250]}
-          selected={credits}
-          onSelect={(value) => setCredits(value)}
-        />
-
-        <div className="bg-yellow-100 p-4 rounded-md mb-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        {/* Content (scrollable) */}
+        <main className="px-5 flex-1 pb-28">
+          {/* stepper */}
+          <div className="mt-6 border border-[#DEDEDE] bg-white h-[48px] flex items-stretch">
+            <button
+              onClick={dec}
+              disabled={credits <= 1 || processing}
+              className="w-[56px] grid place-items-center disabled:opacity-40"
             >
-              <path
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                fill="#FFD700"
-              />
-            </svg>
-            <span className="ml-2 font-bold">1 Credit = ${creditCost}</span>
+              <div className="w-[32px] h-[24px] bg-[#F7B4B4] grid place-items-center">
+                <span className="text-[#EB2726] text-xl leading-none">−</span>
+              </div>
+            </button>
+            <div className="flex-1 grid place-items-center font-semibold">{credits}</div>
+            <button
+              onClick={inc}
+              disabled={processing}
+              className="w-[56px] grid place-items-center"
+            >
+              <div className="w-[32px] h-[24px] bg-[#EB2726] grid place-items-center">
+                <span className="text-white text-xl leading-none">+</span>
+              </div>
+            </button>
           </div>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-              fill="#FFD700"
+
+          {/* quick picks */}
+          <div className="mt-4 grid grid-cols-4 gap-4">
+            {quickPicks.map((v) => (
+              <button
+                key={v}
+                onClick={() => setCredits(v)}
+                className={`h-[40px] bg-white border ${
+                  credits === v ? "border-black" : "border-[#DEDEDE]"
+                } grid place-items-center text-[14px]`}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+
+          {/* price banner */}
+          <div className="mt-5 bg-[#FFF6D9] border border-[#F5E6AB] px-4 py-3 flex items-center justify-between">
+            <Bolt />
+            <div className="text-[14px]">
+              <span className="text-[#616161] mr-2">1 Credit</span>
+              <span className="font-extrabold">${creditCost}</span>
+            </div>
+            <Bolt />
+          </div>
+        </main>
+
+        {/* Sticky footer constrained to the shell */}
+        <footer className="sticky bottom-0 z-40 bg-white border-t">
+          <div className="px-5 py-3 pb-[max(12px,env(safe-area-inset-bottom))]">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[#8C8C8C]">Total cost</span>
+              <span className="font-extrabold text-[16px]">${totalCost}</span>
+            </div>
+            <PrimaryButton
+              label={processing ? "PROCESSING..." : "PAY"}
+              onClick={handlePay}
+              disabled={processing}
+              className="!w-full"
             />
-          </svg>
-        </div>
+          </div>
+        </footer>
+      </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-gray-600">Total cost</p>
-          <p className="text-xl font-bold">${totalCost / 100}</p>
-        </div>
-
-        <PrimaryButton
-          label={isProcessing ? "Processing..." : "PAY"}
-          onClick={handlePay}
-          disabled={isProcessing || !stripePromise}
-        />
-      </section>
+      {/* Result modal */}
+      <PaymentResultModal
+        open={result !== null}
+        type={result || "success"}
+        remainingCredits={remainingCredits}
+        onClose={() => setResult(null)}
+        onRetry={() => {
+          setResult(null);
+          handlePay();
+        }}
+        onBook={() => {
+          setResult(null);
+          navigate("/explore-trainers");
+        }}
+      />
     </div>
   );
-};
-
-export default BuyCredits;
+}

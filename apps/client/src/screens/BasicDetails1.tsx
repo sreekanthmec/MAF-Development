@@ -2,10 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { PrimaryButton } from "../components/Button";
-import { ReactComponent as BeginnerIcon } from "../assets/icon_beginner.svg";
-import { ReactComponent as IntermediateIcon } from "../assets/icon_intermediate.svg";
-import { ReactComponent as ProfessionalIcon } from "../assets/icon_professional.svg";
+import ExperienceGrid from "../components/ExperienceGrid";
 import { updateProfile } from "../services/api";
+
+type Experience = "Beginner" | "Intermediate" | "Professional";
 
 export default function BasicDetails1() {
   const navigate = useNavigate();
@@ -15,13 +15,13 @@ export default function BasicDetails1() {
     name: "",
     age: 30,
     sex: "Male",
-    experience: "Beginner",
+    experience: "Beginner" as Experience,
   };
 
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
-  const [experience, setExperience] = useState("Beginner");
-  const [sex, setSex] = useState("Male");
+  const [experience, setExperience] = useState<Experience>("Beginner");
+  const [sex, setSex] = useState<"Male" | "Female">("Male");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,10 +29,8 @@ export default function BasicDetails1() {
     setName(userProfile.name || "");
     setAge(userProfile.age ? String(userProfile.age) : "");
     setExperience(userProfile.experience || "Beginner");
-    setSex(userProfile.sex || "Male");
+    setSex((userProfile.sex as "Male" | "Female") || "Male");
   }, []);
-
-  const colorFor = (level: string) => (experience === level ? "#D62422" : "#B0B0B0");
 
   const handleNext = useCallback(async () => {
     if (!name || !age || !sex) {
@@ -84,36 +82,13 @@ export default function BasicDetails1() {
             </div>
           </div>
 
-          {/* experience */}
-          <div className="mb-7">
-            <label className="block font-manrope font-extrabold text-[12px] tracking-[0.05em] uppercase mb-3">
-              Your Muaythai Experience
-            </label>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { k: "Beginner", Icon: BeginnerIcon },
-                { k: "Intermediate", Icon: IntermediateIcon },
-                { k: "Professional", Icon: ProfessionalIcon },
-              ].map(({ k, Icon }) => {
-                const selected = experience === k;
-                return (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => setExperience(k)}
-                    className={`border bg-white flex flex-col items-center justify-center gap-1.5 py-2 ${
-                      selected ? "border-[#D62422]" : "border-[#B1B1B1]"
-                    }`}
-                  >
-                    <Icon fill={colorFor(k)} stroke={colorFor(k)} width={48} height={60} />
-                    <span className={`text-[12px] ${selected ? "text-black" : "text-[#717171]"}`}>
-                      {k}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {/* experience (reused component) */}
+          <ExperienceGrid
+            label="Your Muaythai Experience"
+            value={experience}
+            onChange={setExperience}
+            className="mb-7"
+          />
 
           {/* age + sex */}
           <div className="grid grid-cols-2 gap-7">
@@ -138,7 +113,7 @@ export default function BasicDetails1() {
                 Division (Sex)
               </label>
               <div className="flex gap-3">
-                {["Male", "Female"].map((g) => {
+                {(["Male", "Female"] as const).map((g) => {
                   const selected = sex === g;
                   return (
                     <button

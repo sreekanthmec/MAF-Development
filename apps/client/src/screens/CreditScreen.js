@@ -1,105 +1,86 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PrimaryButton } from "../components/Button";
-import BackIcon from "../components/BackIcon";
+import Navbar from "../components/Navbar"; // reuse your navbar with back
+import CreditHistoryItem from "../components/CreditHistoryItem";
+import SupportChip from "../components/SupportChip";
 
-const CreditsScreen = () => {
+export default function CreditsScreen() {
   const navigate = useNavigate();
 
   const creditHistory = [
-    {
-      date: "Aug 12, 10:00 AM",
-      description: "Session with Lazerano",
-      change: -2,
-      changeType: "decrease",
-    },
-    {
-      date: "Aug 12, 10:00 AM",
-      description: "Credit Purchase",
-      change: 50,
-      changeType: "increase",
-    },
-    {
-      date: "Aug 11, 10:00 AM",
-      description: "Session with Helena",
-      change: -2,
-      changeType: "decrease",
-    },
-    {
-      date: "Aug 10, 10:00 AM",
-      description: "Session with Helena",
-      change: -2,
-      changeType: "decrease",
-    },
+    { date: "Aug 12, 10:00 AM", description: "Session with Lazerano", change: -2,  changeType: "decrease" },
+    { date: "Aug 12, 10:00 AM", description: "Credit Purchase",       change: 50,  changeType: "increase" },
+    { date: "Aug 11, 10:00 AM", description: "Session with Helena",    change: -2,  changeType: "decrease" },
+    { date: "Aug 10, 10:00 AM", description: "Session with Helena",    change: -2,  changeType: "decrease" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header
-        className="p-4 text-white"
-        style={{
-          background: "linear-gradient(157.07deg, #3A3A3A 0%, #252525 81.65%)",
-        }}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <BackIcon />
-          <button className="bg-black text-white px-4 py-2 rounded-md flex items-center space-x-2">
-            <span>Support</span>
-          </button>
-        </div>
+    <div className="min-h-[100dvh] w-full bg-[#F7F7F7]">
+      <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
+        {/* Header / hero */}
+        <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)] text-white">
+          {/* <div className="px-5 pt-2"> */}
+            <Navbar
+              onBack={() => navigate(-1)}
+              rightSlot={<SupportChip onClick={() => navigate("/support")} />}
+              // transparent navbar is default per your component
+            />
+          {/* </div> */}
 
-        <div className="text-center mb-8">
-          <p className="text-sm text-gray-400">YOUR CREDITS REMAINING</p>
-          <div className="flex items-center justify-center space-x-2 mt-2">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                fill="#FFCC00"
-              />
-            </svg>
-            <h1 className="text-5xl font-bold">100</h1>
-          </div>
-          <PrimaryButton
-            label="BUY CREDITS"
-            onClick={() => {
-              navigate("/buy-credits");
-            }}
-          />
-        </div>
-      </header>
+          <div className="px-5 pb-6 pt-4">
+            <div className="text-center">
+              <div className="text-[12px] tracking-wide text-[#B0B0B0] font-extrabold">
+                YOUR CREDITS REMAINING
+              </div>
 
-      <section className="p-4">
-        <h3 className="text-lg font-bold text-gray-800 mb-2">CREDIT HISTORY</h3>
-        <div className="space-y-4">
-          {creditHistory.map((item, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-gray-500">{item.date}</p>
-                  <p className="text-lg font-bold">{item.description}</p>
-                </div>
-                <div
-                  className={`text-xl font-bold ${
-                    item.changeType === "decrease"
-                      ? "text-red-600"
-                      : "text-green-600"
-                  }`}
-                >
-                  {item.change > 0 ? `+${item.change}` : item.change}
+              <div className="mt-4 flex items-end justify-center gap-2">
+                {/* Lightning icon */}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 21L15 13H11L13 3L5 13H9V21Z"
+                    fill="#F4C505"
+                    stroke="#F4C505"
+                    strokeWidth="1"
+                  />
+                </svg>
+                <div className="text-white italic font-extrabold text-[48px] leading-none">
+                  100
                 </div>
               </div>
+
+              <div className="mt-5">
+                <PrimaryButton
+                  label="BUY CREDITS"
+                  onClick={() => navigate("/buy-credits")}
+                  className="!w-full"
+                />
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </header>
+
+        {/* List */}
+        <main className="flex-1 w-full">
+          <div className="px-5 py-4">
+            <div className="text-[12px] tracking-[0.05em] font-extrabold text-[#8B8B8B] mb-3">
+              // CREDIT HISTORY
+            </div>
+
+            <div className="space-y-3">
+              {creditHistory.map((item, i) => (
+                <CreditHistoryItem
+                  key={`${item.date}-${i}`}
+                  date={item.date}
+                  description={item.description}
+                  change={item.change}
+                  changeType={item.changeType}
+                />
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
-};
-
-export default CreditsScreen;
+}
