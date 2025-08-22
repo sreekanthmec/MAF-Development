@@ -175,7 +175,7 @@ export default function ExploreTrainers() {
                   {/* schedule box (the only bordered part) */}
                   <div className="px-3 py-2 bg-white border border-[#DEDEDE] rounded">
                     {t.schedule.map((s, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2 text-[#3A3A3A]">
+                      <div key={idx} className="flex items-center justify-between text-[#3A3A3A]">
                         <span className="text-[16px]">{s.day}</span>
                         <span className={s.time.toLowerCase() === "busy" ? "text-[#EB2726] font-semibold" : ""}>
                           {s.time}

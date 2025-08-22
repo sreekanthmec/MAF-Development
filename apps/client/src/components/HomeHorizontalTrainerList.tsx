@@ -61,7 +61,7 @@ const HomeHorizontalTrainerList: React.FC<Props> = ({
               {(t.schedule ?? []).slice(0, 3).map((s, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between py-1 text-[#3A3A3A]"
+                  className="flex items-center justify-between text-[#3A3A3A]"
                 >
                   <span className="text-[16px]">{s.day}</span>
                   <span

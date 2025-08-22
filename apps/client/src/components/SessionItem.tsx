@@ -1,43 +1,40 @@
 // src/components/SessionItem.tsx
 import React from "react";
 
-/**
- * Props:
- * - fullWidth: when true, the card stretches to 100% width (for vertical lists).
- *              when false/omitted, it keeps a fixed width for horizontal carousels.
- * - className: optional extra classes (e.g. margins in vertical lists)
- */
+type Props = {
+  date: string;
+  time: string;
+  trainer: string;
+  sessionIn?: string;
+  isUpcoming: boolean;
+  showFooter: boolean;
+  /** when provided, the entire card becomes clickable */
+  onClick?: () => void;
+  /** full-width when used in vertical lists */
+  fullWidth?: boolean;
+};
+
 export default function SessionItem({
-  date,        // e.g. "AUG 12"
+  date,
   time,
   trainer,
   sessionIn,
   isUpcoming,
   showFooter,
-  fullWidth = false,
-  className = "",
-}: {
-  date: string;
-  time: string;
-  trainer: string;
-  sessionIn?: string;
-  isUpcoming?: boolean;
-  showFooter?: boolean;
-  fullWidth?: boolean;
-  className?: string;
-}) {
+  onClick,
+  fullWidth,
+}: Props) {
   const [month = "", day = ""] = String(date).split(" ");
-
-  const widthClass = fullWidth ? "w-full" : "w-[280px]";
-  const shrinkClass = fullWidth ? "" : "flex-shrink-0";
 
   return (
     <div
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : -1}
       className={[
         "bg-white overflow-hidden",
-        widthClass,
-        shrinkClass,
-        className,
+        fullWidth ? "w-full" : "w-[280px] flex-shrink-0",
+        onClick ? "cursor-pointer" : "",
       ].join(" ")}
       style={{
         border: "1px solid #DEDEDE",

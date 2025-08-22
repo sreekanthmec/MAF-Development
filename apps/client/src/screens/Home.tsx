@@ -159,18 +159,22 @@ export default function Home() {
                          [-ms-overflow-style:none] [scrollbar-width:none]
                          [&::-webkit-scrollbar]:hidden"
             >
-              {upcomingSessions.map((s, i) => (
-                <div key={i} className="snap-start flex-shrink-0">
-                  <SessionItem
-                    date={s.date}
-                    time={s.time}
-                    trainer={s.trainer}
-                    sessionIn={s.sessionIn}
-                    isUpcoming
-                    showFooter={i === 0}
-                  />
-                </div>
-              ))}
+{upcomingSessions.map((s, i) => (
+  <div key={i} className="snap-start flex-shrink-0">
+    <SessionItem
+      date={s.date}
+      time={s.time}
+      trainer={s.trainer}
+      sessionIn={s.sessionIn}
+      isUpcoming
+      showFooter={i === 0}
+      onClick={() =>
+        navigate(`/student/session-details`, { state: { session: s } })
+      }
+    />
+  </div>
+))}
+
             </div>
             <div className="mt-4">
               <TertiaryButton

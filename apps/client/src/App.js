@@ -48,7 +48,7 @@ import TrainerStudents from "./screens/TrainerStudents";
 
 // Legacy Trainer Screens (optional redirects)
 import AllSessions from "./screens/AllSessions";
-import SessionDetails from "./screens/SessionDetails";
+import StudentSessionDetails from "./screens/StudentSessionDetails";
 import EditAvailability from "./screens/EditAvailability";
 
 import RoleSelection from "./components/RoleSelection";
@@ -182,6 +182,7 @@ function App() {
           <Route path="/student/basic-details1" element={<ProtectedRoute role="student"><BasicDetails1 /></ProtectedRoute>} />
           <Route path="/student/basic-details2" element={<ProtectedRoute role="student"><BasicDetails2 /></ProtectedRoute>} />
           <Route path="/student/session-history" element={<ProtectedRoute role="student"><SessionHistory /></ProtectedRoute>} />
+          <Route path="/student/session-details" element={<ProtectedRoute role="student"><StudentSessionDetails /></ProtectedRoute>} />
           <Route path="/student/explore-trainers" element={<ProtectedRoute role="student"><ExploreTrainers /></ProtectedRoute>} />
           <Route path="/student/trainers" element={<ProtectedRoute role="student"><Trainers /></ProtectedRoute>} />
           <Route path="/student/trainer-details" element={<ProtectedRoute role="student"><TrainerDetails /></ProtectedRoute>} />
