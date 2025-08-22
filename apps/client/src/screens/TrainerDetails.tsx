@@ -162,7 +162,7 @@ export default function TrainerDetails() {
                     available={s.available}
                     onBook={() => {
                       if (!s.available) return;
-                      navigate("/booking", {
+                      navigate("/student/session-duration", {
                         state: { trainer, time: s.time, day: days[selectedDay] },
                       });
                     }}

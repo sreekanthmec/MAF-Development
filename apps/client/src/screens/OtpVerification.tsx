@@ -12,6 +12,7 @@ const Screen = styled.div`
   min-height: 100dvh;
   width: 100%;
   background: #fff;
+  padding-top: max(12px, env(safe-area-inset-top));
 `;
 
 const Shell = styled.div`

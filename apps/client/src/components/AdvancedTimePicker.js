@@ -1,10 +1,24 @@
-import React, { useState } from "react";
-import { PrimaryButton } from "../components/Button";
+import React, { useState, useRef, useEffect } from "react";
+import { PrimaryButton } from "./Button";
 
-const TimePicker = ({ onConfirm, onClose }) => {
+const AdvancedTimePicker = ({ onConfirm, onClose, initialTime = "04:30 PM" }) => {
   const [hour, setHour] = useState(4);
   const [minute, setMinute] = useState(30);
   const [period, setPeriod] = useState("PM");
+  
+  const hoursRef = useRef(null);
+  const minutesRef = useRef(null);
+  const periodRef = useRef(null);
+
+  // Parse initial time
+  useEffect(() => {
+    const timeMatch = initialTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (timeMatch) {
+      setHour(parseInt(timeMatch[1]));
+      setMinute(parseInt(timeMatch[2]));
+      setPeriod(timeMatch[3].toUpperCase());
+    }
+  }, [initialTime]);
 
   const handleConfirm = () => {
     const time = `${hour.toString().padStart(2, "0")}:${minute
@@ -18,6 +32,23 @@ const TimePicker = ({ onConfirm, onClose }) => {
   const minutes = [0, 15, 30, 45];
   const periods = ["AM", "PM"];
 
+  // Scroll to selected item
+  const scrollToSelected = (ref, selectedIndex, itemHeight = 40) => {
+    if (ref.current) {
+      const scrollTop = selectedIndex * itemHeight - ref.current.clientHeight / 2 + itemHeight / 2;
+      ref.current.scrollTo({ top: scrollTop, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    // Scroll to selected items after component mounts
+    setTimeout(() => {
+      scrollToSelected(hoursRef, hour - 1);
+      scrollToSelected(minutesRef, minutes.indexOf(minute));
+      scrollToSelected(periodRef, periods.indexOf(period));
+    }, 100);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end z-50">
       <div className="bg-white w-full max-w-sm rounded-t-lg overflow-hidden">
@@ -26,58 +57,76 @@ const TimePicker = ({ onConfirm, onClose }) => {
           <div className="flex justify-center items-center mb-6">
             {/* Hours Column */}
             <div className="flex flex-col items-center mr-8">
-              <div className="h-40 overflow-y-auto scrollbar-hide">
+              <div 
+                ref={hoursRef}
+                className="h-40 overflow-y-auto scrollbar-hide relative"
+                style={{ width: '60px' }}
+              >
+                <div className="h-20"></div> {/* Top spacer */}
                 {hours.map((h) => (
                   <div
                     key={h}
-                    className={`py-2 px-4 text-center cursor-pointer transition-colors ${
+                    className={`h-10 flex items-center justify-center cursor-pointer transition-colors ${
                       h === hour 
-                        ? "text-red-600 font-bold" 
-                        : "text-gray-400"
+                        ? "text-red-600 font-bold text-lg" 
+                        : "text-gray-400 text-sm"
                     }`}
                     onClick={() => setHour(h)}
                   >
                     {h.toString().padStart(2, "0")}
                   </div>
                 ))}
+                <div className="h-20"></div> {/* Bottom spacer */}
               </div>
             </div>
 
             {/* Minutes Column */}
             <div className="flex flex-col items-center mr-8">
-              <div className="h-40 overflow-y-auto scrollbar-hide">
+              <div 
+                ref={minutesRef}
+                className="h-40 overflow-y-auto scrollbar-hide relative"
+                style={{ width: '60px' }}
+              >
+                <div className="h-20"></div> {/* Top spacer */}
                 {minutes.map((m) => (
                   <div
                     key={m}
-                    className={`py-2 px-4 text-center cursor-pointer transition-colors ${
+                    className={`h-10 flex items-center justify-center cursor-pointer transition-colors ${
                       m === minute 
-                        ? "text-red-600 font-bold" 
-                        : "text-gray-400"
+                        ? "text-red-600 font-bold text-lg" 
+                        : "text-gray-400 text-sm"
                     }`}
                     onClick={() => setMinute(m)}
                   >
                     {m.toString().padStart(2, "0")}
                   </div>
                 ))}
+                <div className="h-20"></div> {/* Bottom spacer */}
               </div>
             </div>
 
             {/* AM/PM Column */}
             <div className="flex flex-col items-center">
-              <div className="h-40 overflow-y-auto scrollbar-hide">
+              <div 
+                ref={periodRef}
+                className="h-40 overflow-y-auto scrollbar-hide relative"
+                style={{ width: '60px' }}
+              >
+                <div className="h-20"></div> {/* Top spacer */}
                 {periods.map((p) => (
                   <div
                     key={p}
-                    className={`py-2 px-4 text-center cursor-pointer transition-colors ${
+                    className={`h-10 flex items-center justify-center cursor-pointer transition-colors ${
                       p === period 
-                        ? "text-red-600 font-bold" 
-                        : "text-gray-400"
+                        ? "text-red-600 font-bold text-lg" 
+                        : "text-gray-400 text-sm"
                     }`}
                     onClick={() => setPeriod(p)}
                   >
                     {p}
                   </div>
                 ))}
+                <div className="h-20"></div> {/* Bottom spacer */}
               </div>
             </div>
           </div>
@@ -126,4 +175,4 @@ const TimePicker = ({ onConfirm, onClose }) => {
   );
 };
 
-export default TimePicker;
+export default AdvancedTimePicker;

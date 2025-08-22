@@ -20,6 +20,7 @@ type Props = {
   trainers: HomeTrainer[];
   onCardClick: (trainer: HomeTrainer, index: number) => void;
   onExploreAll: () => void;
+  gradient?: "red" | "dark";
 };
 
 
@@ -28,6 +29,7 @@ const HomeHorizontalTrainerList: React.FC<Props> = ({
   trainers,
   onCardClick,
   onExploreAll,
+  gradient = "red",
 }) => {
   return (
     <section className="px-5 pt-12">
@@ -48,7 +50,7 @@ const HomeHorizontalTrainerList: React.FC<Props> = ({
             <OverflowHeader
               name={t.name}
               rate={t.rate}
-              gradient="red"
+              gradient={gradient}
               meta={`${t.age}${t.sex}`}
               imageSrc={String(t.imageUrl || trainerImg)}
               imgHeight={140}   // image height (controls “peek above”)

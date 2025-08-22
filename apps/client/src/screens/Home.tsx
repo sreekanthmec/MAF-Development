@@ -70,7 +70,7 @@ export default function Home() {
           <div className="px-5 pt-5 relative z-10">
             <div className="flex items-center justify-between">
               <button
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/student/profile")}
                 className="flex items-center gap-2"
                 aria-label="Profile"
               >
@@ -92,7 +92,11 @@ export default function Home() {
                   <div className="text-sm font-semibold leading-none">Kishan P</div>
                 </div>
               </button>
-              <CreditsBalance balance={23} />
+              <CreditsBalance 
+                balance={100} 
+                variant="dark"
+                onAdd={() => navigate("/student/buy-credits")}
+              />
             </div>
 
             <div className="mt-20 mb-6">
@@ -189,6 +193,7 @@ export default function Home() {
           {/* Explore Trainers */}
           <HomeHorizontalTrainerList
             trainers={trainers}
+            gradient="dark"
             onCardClick={(t, i) =>
               navigate(`/trainer-details`, { state: { trainer: t } })
             }

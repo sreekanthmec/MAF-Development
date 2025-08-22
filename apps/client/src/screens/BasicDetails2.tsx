@@ -49,7 +49,7 @@ export default function BasicDetails2() {
     }`;
 
   return (
-    <div className="w-full bg-[#F7F7F7] min-h-[100dvh]">
+    <div className="w-full bg-[#F7F7F7] min-h-[100dvh] pt-[max(12px,env(safe-area-inset-top))]">
       <div className="mx-auto max-w-[400px] h-[100dvh] flex flex-col">
         <Navbar onBack={() => navigate(-1)} />
 

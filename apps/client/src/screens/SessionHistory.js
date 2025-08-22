@@ -50,6 +50,7 @@ export default function SessionHistory() {
                     showFooter={i === 0} // red countdown bar on the first card
                     className="mx-0"
                     fullWidth={true}
+                    onClick={() => navigate(`/student/session-details`, { state: { session: s } })}
                   />
                 </div>
               ))}
@@ -67,6 +68,7 @@ export default function SessionHistory() {
                     showFooter={false}
                     fullWidth={true}
                     className="mx-0"
+                    onClick={() => navigate(`/student/session-details`, { state: { session: s } })}
                   />
                 </div>
               ))}

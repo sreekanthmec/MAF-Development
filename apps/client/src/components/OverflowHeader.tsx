@@ -37,10 +37,9 @@ const OverflowHeader: React.FC<OverflowHeaderProps> = ({
   const first = parts.slice(0, -1).join(" ") || parts[0] || "";
   const last = parts.slice(-1).join(" ");
 
-  const bandClass =
-    gradient === "red"
-      ? "bg-[#EB2726]"
-      : "bg-[linear-gradient(157.07deg,#3A3A3A_0%,#252525_81.65%)]";
+  const bandStyle = gradient === "red"
+    ? { background: "linear-gradient(180deg, #F43735 0%, #D62422 100%)" }
+    : { background: "linear-gradient(157.07deg, #3A3A3A 0%, #252525 81.65%)" };
 
   return (
     <div
@@ -51,8 +50,8 @@ const OverflowHeader: React.FC<OverflowHeaderProps> = ({
       {/* Gradient band anchored to the bottom.
           The area above the band stays TRANSPARENT. */}
       <div
-        className={`absolute inset-x-0 bottom-0 ${bandClass}`}
-        style={{ height: bandHeight }}
+        className="absolute inset-x-0 bottom-0"
+        style={{ height: bandHeight, ...bandStyle }}
       >
         <div className="px-4 pt-3">
           <div className="text-white text-[22px] leading-[22px] italic font-extrabold uppercase">

@@ -1,10 +1,12 @@
 // src/screens/ExploreTrainers.tsx
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Heart, Sparkles, Plus, Zap } from "lucide-react";
+import { Heart, Sparkles } from "lucide-react";
 import Title from "../components/Title";
 import DaySelector from "../components/DaySelector";
 import OverflowHeader from "../components/OverflowHeader";
+import CreditsBalance from "../components/CreditBalance";
+import Navbar from "../components/Navbar";
 import trainerImg from "../assets/trainer.png";
 
 /* --------------------------------- types ---------------------------------- */
@@ -18,24 +20,6 @@ type Trainer = {
 };
 
 /* ------------------------------ tiny atoms -------------------------------- */
-const CreditsPill: React.FC<{ balance: number; onAdd?: () => void }> = ({
-  balance,
-  onAdd,
-}) => (
-  <div className="flex items-center gap-2">
-    <div className="h-9 px-3 rounded-md border border-[#DEDEDE] bg-white flex items-center gap-2">
-      <Zap className="w-4 h-4 text-[#FFC800]" />
-      <span className="text-sm font-extrabold">{balance}</span>
-    </div>
-    <button
-      onClick={onAdd}
-      className="h-9 w-9 grid place-items-center rounded-md bg-[#EB2726]"
-      aria-label="Add credits"
-    >
-      <Plus className="w-4 h-4 text-white" />
-    </button>
-  </div>
-);
 
 const SegmentedTwo: React.FC<{
   left: { icon: React.ReactNode; label: string };
@@ -132,20 +116,26 @@ export default function ExploreTrainers() {
   );
 
   return (
-    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
-      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
-        {/* Header */}
-        <header className="px-5 pt-4 pb-2 bg-white">
-          <div className="flex items-center justify-between">
-            <button onClick={() => navigate(-1)} aria-label="Back" className="-ml-1 p-1">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <CreditsPill balance={100} onAdd={() => navigate("/buy-credits")} />
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="flex-1">
+    <div className="h-[100dvh] flex flex-col bg-[#F7F7F7] pt-[max(12px,env(safe-area-inset-top))]">
+      <Navbar 
+        background="white"
+        right={
+          <CreditsBalance 
+            balance={100} 
+            variant="white-with-button"
+            onAdd={() => navigate("/student/buy-credits")} 
+          />
+        }
+      />
+      
+      {/* Scrollable content */}
+      <div 
+        className="flex-1 overflow-y-auto"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <div className="mx-auto max-w-[400px] px-5">
+          {/* Content */}
+          <main className="flex-1">
           {/* Segmented control */}
           <section className="px-5 pt-4">
             <SegmentedTwo
@@ -215,7 +205,7 @@ export default function ExploreTrainers() {
                       <button
                         key={k}
                         className="px-2 py-2 bg-white border border-[#DBDBDB] grid place-items-center text-[12px] font-semibold"
-                        onClick={() => navigate("/booking", { state: { trainer: t, time } })}
+                        onClick={() => navigate("/student/session-duration", { state: { trainer: t, time } })}
                       >
                         {time}
                       </button>
@@ -226,6 +216,7 @@ export default function ExploreTrainers() {
             </div>
           </section>
         </main>
+        </div>
       </div>
     </div>
   );

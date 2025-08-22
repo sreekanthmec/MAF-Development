@@ -129,6 +129,16 @@ button span.flex-1 {
   white-space: nowrap;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
 @media (min-width: 769px) {
   /* Ensure desktop maintains the centered mobile container */
   body {
