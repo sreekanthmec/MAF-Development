@@ -1,11 +1,11 @@
+// src/components/SessionItem.tsx
 import React from "react";
 
 /**
- * Design notes:
- * - Left column: Month/Day block (80x80), light gray background, 1px right border
- * - Right: time (muted), trainer name (bold, uppercase)
- * - Optional bottom red bar when upcoming + showFooter, “Session starts in …”
- * - Width: 280px (w-70) so two cards look balanced in the scroller
+ * Props:
+ * - fullWidth: when true, the card stretches to 100% width (for vertical lists).
+ *              when false/omitted, it keeps a fixed width for horizontal carousels.
+ * - className: optional extra classes (e.g. margins in vertical lists)
  */
 export default function SessionItem({
   date,        // e.g. "AUG 12"
@@ -14,12 +14,31 @@ export default function SessionItem({
   sessionIn,
   isUpcoming,
   showFooter,
+  fullWidth = false,
+  className = "",
+}: {
+  date: string;
+  time: string;
+  trainer: string;
+  sessionIn?: string;
+  isUpcoming?: boolean;
+  showFooter?: boolean;
+  fullWidth?: boolean;
+  className?: string;
 }) {
   const [month = "", day = ""] = String(date).split(" ");
 
+  const widthClass = fullWidth ? "w-full" : "w-[280px]";
+  const shrinkClass = fullWidth ? "" : "flex-shrink-0";
+
   return (
     <div
-      className="bg-white overflow-hidden flex-shrink-0 w-[280px]"
+      className={[
+        "bg-white overflow-hidden",
+        widthClass,
+        shrinkClass,
+        className,
+      ].join(" ")}
       style={{
         border: "1px solid #DEDEDE",
         boxShadow: "0px 4px 6px rgba(0,0,0,0.10)",

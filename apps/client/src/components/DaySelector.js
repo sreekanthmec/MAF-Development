@@ -1,45 +1,71 @@
+// src/components/DaySelector.tsx
 import React from "react";
 
-const DaySelector = ({ days, selectedDay, setSelectedDay }) => {
+type Day = { date: string; day: string };
+type Props = {
+  days: Day[];
+  selectedDay: number;
+  setSelectedDay: (i: number) => void;
+};
+
+const DaySelector: React.FC<Props> = ({ days, selectedDay, setSelectedDay }) => {
   return (
-    <div className="flex overflow-x-scroll space-x-4 mb-4">
-      {days.map((day, index) => (
-        <div
-          key={index}
-          onClick={() => setSelectedDay(index)} // Handle click to select day
-          style={{
-            borderRadius: "4px",
-            border:
-              index === selectedDay ? "2px solid #EB2726" : "1px solid #B0B0B0",
-            padding: "16px",
-            cursor: "pointer",
-            backgroundColor: index === selectedDay ? "#FFFFFF" : "#F9F9F9",
-          }}
-          className="flex flex-col items-center w-24"
-        >
-          <p
-            className={`text-sm font-medium mb-1 ${
-              index === selectedDay ? "text-red-600" : "text-gray-500"
-            }`}
+    <div
+      className="
+        flex gap-4 overflow-x-auto pb-1
+        [-ms-overflow-style:none] [scrollbar-width:none]
+        [&::-webkit-scrollbar]:hidden
+      "
+    >
+      {days.map((d, i) => {
+        const [mon, dd] = d.date.split(" "); // e.g. "AUG 12"
+        const isActive = i === selectedDay;
+
+        return (
+          <button
+            key={i}
+            onClick={() => setSelectedDay(i)}
+            aria-pressed={isActive}
+            className={[
+              "shrink-0 w-[96px] text-center bg-white",
+              isActive ? "border-2 border-[#EB2726]" : "border border-[#DBDBDB]",
+              "focus:outline-none"
+            ].join(" ")}
           >
-            {day.date.split(" ")[0]}
-          </p>
-          <p
-            className={`text-xl font-bold ${
-              index === selectedDay ? "text-red-600" : "text-black"
-            }`}
-          >
-            {day.date.split(" ")[1]}
-          </p>
-          <p
-            className={`text-sm font-medium ${
-              index === selectedDay ? "text-red-600" : "text-gray-500"
-            }`}
-          >
-            {day.day}
-          </p>
-        </div>
-      ))}
+            {/* Top header (month) */}
+            <div className="px-3 pt-2 pb-2 bg-white rounded-t-[3px]">
+              <div className="text-[14px] font-extrabold tracking-[0.06em] text-[#8C8C8C] uppercase">
+                {mon}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-[#E7E7E7]" />
+
+            {/* Bottom panel (date + weekday) */}
+            <div className="px-3 py-3 bg-[#F7F7F7] rounded-b-[3px]">
+              <div
+                className={[
+                  "leading-none font-extrabold",
+                  // tweak size to your taste; screenshot looks ~28–32px
+                  "text-[28px]",
+                  isActive ? "text-[#EB2726]" : "text-black"
+                ].join(" ")}
+              >
+                {dd}
+              </div>
+              <div
+                className={[
+                  "mt-1 text-[12px] font-extrabold tracking-[0.06em] uppercase",
+                  isActive ? "text-[#EB2726]" : "text-[#7A7A7A]"
+                ].join(" ")}
+              >
+                {d.day}
+              </div>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 };

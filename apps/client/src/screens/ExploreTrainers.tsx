@@ -168,9 +168,9 @@ export default function ExploreTrainers() {
                     meta={`${t.age}${t.sex}`}
                     imageSrc={String(t.imageUrl || trainerImg)}
                     gradient="red"
-                    imgHeight={184}
+                    imgHeight={140}
                     bandHeight={100}
-                    onClick={() => navigate(`/trainer-details/${i}`, { state: { trainer: t } })}
+                    onClick={() => navigate(`/trainer-details`, { state: { trainer: t } })}
                   />
                   {/* schedule box (the only bordered part) */}
                   <div className="px-3 py-2 bg-white border border-[#DEDEDE] rounded">
@@ -205,9 +205,9 @@ export default function ExploreTrainers() {
                     meta={`${t.age}${t.sex}`}
                     imageSrc={String(t.imageUrl || trainerImg)}
                     gradient="dark"
-                    imgHeight={210}
+                    imgHeight={140}
                     bandHeight={100}
-                    onClick={() => navigate(`/trainer-details/${i}`, { state: { trainer: t } })}
+                    onClick={() => navigate(`/trainer-details`, { state: { trainer: t } })}
                   />
                   {/* time slots box (again, only this part has a border) */}
                   <div className="px-5 py-4 bg-white border border-[#DEDEDE] rounded grid grid-cols-3 gap-4">

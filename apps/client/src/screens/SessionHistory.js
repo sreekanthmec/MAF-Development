@@ -1,106 +1,79 @@
+// src/screens/SessionHistory.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SessionItem from "../components/SessionItem"; // Adjust the import path as necessary
-import BackIcon from "../components/BackIcon";
+import Navbar from "../components/Navbar";
+import Title from "../components/Title";
+import TabBar from "../components/TabBar";
+import SessionItem from "../components/SessionItem";
 
-const SessionHistory = () => {
+export default function SessionHistory() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Upcoming");
+  const [activeTab, setActiveTab] = useState(0); // 0: Upcoming, 1: Completed
 
   const upcomingSessions = [
-    {
-      date: "AUG 12",
-      time: "10:00 AM - 11:00 AM",
-      trainer: "Takeru Segawa",
-      sessionIn: "2d 4h 30m",
-    },
-    {
-      date: "AUG 13",
-      time: "9:00 AM - 10:00 AM",
-      trainer: "Helena Padilla",
-      sessionIn: "1d 6h 10m",
-    },
+    { date: "AUG 12", time: "10:00 AM - 11:00 AM", trainer: "Takeru Segawa", sessionIn: "2d 4h 30m" },
+    { date: "AUG 13", time: "9:00 AM - 10:00 AM", trainer: "Helena Padilla", sessionIn: "1d 6h 10m" },
   ];
 
   const completedSessions = [
-    {
-      date: "AUG 10",
-      time: "9:00 AM - 10:00 AM",
-      trainer: "Lazar Amigano",
-    },
-    {
-      date: "AUG 09",
-      time: "8:00 AM - 9:00 AM",
-      trainer: "Sanchai Sor Kingstar",
-    },
+    { date: "AUG 10", time: "9:00 AM - 10:00 AM", trainer: "Lazar Amigano" },
+    { date: "AUG 09", time: "8:00 AM - 9:00 AM", trainer: "Sanchai Sor Kingstar" },
+    { date: "AUG 08", time: "7:00 AM - 8:00 AM", trainer: "Helena Padilla" },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <header className="flex items-center mb-4">
-        <BackIcon />
-        <h1 className="ml-4 text-2xl font-bold">Session History</h1>
-      </header>
+    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
+        {/* Top nav */}
+        <Navbar onBack={() => navigate(-1)} />
 
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <nav className="flex justify-between mb-4">
-          <button
-            className={`flex-1 text-center font-bold pb-2 ${
-              activeTab === "Upcoming"
-                ? "border-b-2 border-black text-black"
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("Upcoming")}
-          >
-            Upcoming
-          </button>
-          <button
-            className={`flex-1 text-center font-bold pb-2 ${
-              activeTab === "Completed"
-                ? "border-b-2 border-black text-black"
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("Completed")}
-          >
-            Completed
-          </button>
-        </nav>
+        {/* Title */}
+        <section className="px-5 pt-2">
+          <Title text="// Session History" />
+        </section>
 
-        <div>
-          {activeTab === "Upcoming" && (
+        {/* Tabs */}
+        <TabBar tabs={["UPCOMING", "COMPLETED"]} active={activeTab} onChange={setActiveTab} />
+
+        {/* List */}
+        <main className="px-5 pt-4 pb-10">
+          {activeTab === 0 ? (
             <div className="space-y-4">
-              {upcomingSessions.map((session, index) => (
-                <SessionItem
-                  key={index}
-                  date={session.date}
-                  time={session.time}
-                  trainer={session.trainer}
-                  sessionIn={session.sessionIn}
-                  isUpcoming={true}
-                  showFooter={index === 0} // Show footer only for the first item
-                />
+              {upcomingSessions.map((s, i) => (
+                <div key={`${s.date}-${s.trainer}-${i}`} className="w-full">
+                  <SessionItem
+                    date={s.date}
+                    time={s.time}
+                    trainer={s.trainer}
+                    sessionIn={s.sessionIn}
+                    isUpcoming={true}
+                    showFooter={i === 0} // red countdown bar on the first card
+                    className="mx-0"
+                    fullWidth={true}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {completedSessions.map((s, i) => (
+                <div key={`${s.date}-${s.trainer}-${i}`} className="w-full">
+                  <SessionItem
+                    date={s.date}
+                    time={s.time}
+                    trainer={s.trainer}
+                    sessionIn=""        // keep prop for type safety if required
+                    isUpcoming={false}
+                    showFooter={false}
+                    fullWidth={true}
+                    className="mx-0"
+                  />
+                </div>
               ))}
             </div>
           )}
-
-          {activeTab === "Completed" && (
-            <div className="space-y-4">
-              {completedSessions.map((session, index) => (
-                <SessionItem
-                  key={index}
-                  date={session.date}
-                  time={session.time}
-                  trainer={session.trainer}
-                  isUpcoming={false} // Set to false for completed sessions
-                  showFooter={false} // No footer for completed sessions
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        </main>
       </div>
     </div>
   );
-};
-
-export default SessionHistory;
+}

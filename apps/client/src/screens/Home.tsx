@@ -186,7 +186,7 @@ export default function Home() {
           <HomeHorizontalTrainerList
             trainers={trainers}
             onCardClick={(t, i) =>
-              navigate(`/trainer-details/${i}`, { state: { trainer: t } })
+              navigate(`/trainer-details`, { state: { trainer: t } })
             }
             onExploreAll={() => navigate("/explore-trainers")}
           />

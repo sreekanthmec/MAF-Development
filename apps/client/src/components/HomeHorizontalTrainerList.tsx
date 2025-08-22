@@ -51,7 +51,7 @@ const HomeHorizontalTrainerList: React.FC<Props> = ({
               gradient="red"
               meta={`${t.age}${t.sex}`}
               imageSrc={String(t.imageUrl || trainerImg)}
-              imgHeight={184}   // image height (controls “peek above”)
+              imgHeight={140}   // image height (controls “peek above”)
               bandHeight={100}  // visible gradient band
               onClick={() => onCardClick(t, i)}
             />
