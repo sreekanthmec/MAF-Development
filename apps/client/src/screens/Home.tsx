@@ -154,7 +154,7 @@ export default function Home() {
         </header>
 
         {/* Scrollable content */}
-        <main className="flex-1 pb-10">
+        <main className="flex-1 pb-20">
           {/* Upcoming */}
           <section className="px-5 pt-6">
             <Title text="// Upcoming Sessions" />

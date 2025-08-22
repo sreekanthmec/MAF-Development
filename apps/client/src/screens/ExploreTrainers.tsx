@@ -27,19 +27,32 @@ const SegmentedTwo: React.FC<{
   value: "left" | "right";
   onChange: (v: "left" | "right") => void;
 }> = ({ left, right, value, onChange }) => {
-  const base =
-    "flex items-center gap-2 px-5 h-[56px] border border-black bg-white";
+  const base = (selected: boolean) =>
+    `flex flex-col justify-between items-start p-4 pb-3 gap-4 w-[152px] h-[88px] border-2 bg-white ${
+      selected ? "border-[#D62422]" : "border-[#B1B1B1]"
+    }`;
+  
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <button className={base} onClick={() => onChange("left")}>
-        {left.icon}
-        <span className="text-[12px] font-extrabold tracking-[0.06em]">
+    <div className="flex gap-4">
+      <button 
+        className={base(value === "left")} 
+        onClick={() => onChange("left")}
+      >
+        <div className="w-6 h-6 text-[#D62422]">
+          {left.icon}
+        </div>
+        <span className="font-manrope font-extrabold text-[14px] leading-5 tracking-[0.02em] uppercase whitespace-nowrap">
           {left.label}
         </span>
       </button>
-      <button className={base} onClick={() => onChange("right")}>
-        {right.icon}
-        <span className="text-[12px] font-extrabold tracking-[0.06em]">
+      <button 
+        className={base(value === "right")} 
+        onClick={() => onChange("right")}
+      >
+        <div className="w-6 h-6 text-[#D62422]">
+          {right.icon}
+        </div>
+        <span className="font-manrope font-extrabold text-[14px] leading-5 tracking-[0.02em] uppercase whitespace-nowrap">
           {right.label}
         </span>
       </button>
@@ -116,38 +129,51 @@ export default function ExploreTrainers() {
   );
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#F7F7F7] pt-[max(12px,env(safe-area-inset-top))]">
-      <Navbar 
-        background="white"
-        right={
-          <CreditsBalance 
-            balance={100} 
-            variant="white-with-button"
-            onAdd={() => navigate("/student/buy-credits")} 
-          />
-        }
-      />
-      
-      {/* Scrollable content */}
-      <div 
-        className="flex-1 overflow-y-auto"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        <div className="mx-auto max-w-[400px] px-5">
-          {/* Content */}
-          <main className="flex-1">
-          {/* Segmented control */}
-          <section className="px-5 pt-4">
-            <SegmentedTwo
-              value={seg}
-              onChange={setSeg}
-              left={{ icon: <Heart className="w-5 h-5" />, label: "MY TRAINERS" }}
-              right={{ icon: <Sparkles className="w-5 h-5" />, label: "ALL TRAINERS" }}
+    <div className="h-[100dvh] bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="mx-auto max-w-[400px] pt-[max(40px,env(safe-area-inset-top))]">
+        <Navbar 
+          background="transparent"
+          right={
+            <CreditsBalance 
+              balance={100} 
+              variant="white-with-button"
+              onAdd={() => navigate("/student/buy-credits")} 
             />
+          }
+        />
+        
+        {/* Content */}
+        <main className="px-5">
+          {/* Navigation Buttons */}
+          <section className="pt-4">
+            <div className="flex gap-4">
+              <button 
+                onClick={() => navigate("/student/my-trainers")}
+                className="flex flex-col justify-between items-start p-4 pb-3 gap-4 w-[152px] h-[88px] border-2 border-[#D62422] bg-white"
+              >
+                <div className="w-6 h-6 text-[#D62422]">
+                  <Heart className="w-6 h-6" />
+                </div>
+                <span className="font-manrope font-extrabold text-[14px] leading-5 tracking-[0.02em] uppercase whitespace-nowrap">
+                  MY TRAINERS
+                </span>
+              </button>
+              <button 
+                onClick={() => navigate("/student/all-trainers")}
+                className="flex flex-col justify-between items-start p-4 pb-3 gap-4 w-[152px] h-[88px] border-2 border-[#B1B1B1] bg-white"
+              >
+                <div className="w-6 h-6 text-[#D62422]">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <span className="font-manrope font-extrabold text-[14px] leading-5 tracking-[0.02em] uppercase whitespace-nowrap">
+                  ALL TRAINERS
+                </span>
+              </button>
+            </div>
           </section>
 
           {/* TOP TRAINERS — horizontal (header is transparent; schedule box has the border) */}
-          <section className="px-5 pt-6">
+          <section className="pt-6">
             <Title text="// Top Trainers" />
             <div className="mt-3 flex gap-4 overflow-x-auto snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {topTrainers.map((t, i) => (
@@ -179,7 +205,7 @@ export default function ExploreTrainers() {
           </section>
 
           {/* AVAILABLE TRAINERS — vertical list */}
-          <section className="px-5 pt-6 pb-10">
+          <section className="pt-6 pb-20">
             <Title text="// Available Trainers" />
 
             <div className="mt-3">
@@ -216,7 +242,6 @@ export default function ExploreTrainers() {
             </div>
           </section>
         </main>
-        </div>
       </div>
     </div>
   );

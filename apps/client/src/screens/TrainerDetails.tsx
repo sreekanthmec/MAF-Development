@@ -145,7 +145,7 @@ export default function TrainerDetails() {
           />
 
           {activeTab === 0 ? (
-            <section className="px-5 pb-10">
+            <section className="px-5 pb-20">
               <div className="mt-4">
                 <DaySelector
                   days={days}
@@ -171,7 +171,7 @@ export default function TrainerDetails() {
               </div>
             </section>
           ) : (
-            <section className="px-5 pb-10">
+            <section className="px-5 pb-20">
               {/* about blurb */}
               <div className="mt-5 bg-white border border-[#DEDEDE] rounded">
                 <div className="p-4">

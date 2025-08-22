@@ -19,6 +19,8 @@ import OtpVerification from "./screens/OtpVerification";
 import Login from "./screens/Login";
 import SessionHistory from "./screens/SessionHistory";
 import ExploreTrainers from "./screens/ExploreTrainers";
+import MyTrainers from "./screens/MyTrainers";
+import AllTrainers from "./screens/AllTrainers";
 import Trainers from "./screens/Trainers";
 import TrainerDetails from "./screens/TrainerDetails";
 import SelectAddress from "./screens/SelectAddress";
@@ -184,6 +186,8 @@ function App() {
           <Route path="/student/session-history" element={<ProtectedRoute role="student"><SessionHistory /></ProtectedRoute>} />
           <Route path="/student/session-details" element={<ProtectedRoute role="student"><StudentSessionDetails /></ProtectedRoute>} />
           <Route path="/student/explore-trainers" element={<ProtectedRoute role="student"><ExploreTrainers /></ProtectedRoute>} />
+          <Route path="/student/my-trainers" element={<ProtectedRoute role="student"><MyTrainers /></ProtectedRoute>} />
+          <Route path="/student/all-trainers" element={<ProtectedRoute role="student"><AllTrainers /></ProtectedRoute>} />
           <Route path="/student/trainers" element={<ProtectedRoute role="student"><Trainers /></ProtectedRoute>} />
           <Route path="/student/trainer-details" element={<ProtectedRoute role="student"><TrainerDetails /></ProtectedRoute>} />
           <Route path="/student/select-address" element={<ProtectedRoute role="student"><SelectAddress /></ProtectedRoute>} />

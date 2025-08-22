@@ -61,7 +61,7 @@ const CreditsBalance: React.FC<CreditsBalanceProps> = ({
       className={`flex items-center overflow-hidden ${colors.bg} ${colors.border}`} 
       onClick={variant === "dark" ? handleClick : undefined}
     >
-      <div className={`flex items-center ${colors.bg} ${colors.text} px-2 py-1`}>
+      <div className={`flex items-center ${colors.bg} ${colors.text} px-1 py-1`}>
         <svg
           width="16"
           height="16"
@@ -74,7 +74,7 @@ const CreditsBalance: React.FC<CreditsBalanceProps> = ({
             fill={colors.boltFill}
           />
         </svg>
-        <span className="ml-2">{balance}</span>
+        <span className="ml-2 font-manrope font-extrabold text-[14px] leading-5 tracking-[0.02em]">{balance}</span>
       </div>
       {showButton && (
         <button
@@ -82,7 +82,7 @@ const CreditsBalance: React.FC<CreditsBalanceProps> = ({
             e.stopPropagation();
             handleAdd();
           }}
-          className="bg-[#EB2726] text-white w-8 h-8 flex items-center justify-center hover:bg-[#D62422] transition-colors my-1 mx-1"
+          className="bg-[#EB2726] text-white w-6 h-6 flex items-center justify-center hover:bg-[#D62422] transition-colors my-1 mx-1"
         >
           <svg
             width="12"

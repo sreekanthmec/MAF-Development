@@ -57,7 +57,7 @@ const TrainerEditProfile: React.FC = () => {
         {/* Header – same look as Trainer Profile */}
         <div className="relative overflow-hidden bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)]">
           {/* content */}
-          <div className="mx-auto max-w-[400px] px-5 pt-5 pb-10 text-white relative z-10">
+          <div className="mx-auto max-w-[400px] px-5 pt-5 pb-20 text-white relative z-10">
             <div className="mb-6">
               <BackIcon />
             </div>
