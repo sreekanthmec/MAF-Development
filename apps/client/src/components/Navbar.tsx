@@ -8,18 +8,17 @@ type Props = {
   right?: React.ReactNode;
   /** defaults to transparent */
   background?: string;
-  /** when true, keeps the bar pinned during scroll sections */
-  sticky?: boolean;
   className?: string;
+  /** height of spacer above navbar, defaults to 200px */
+  spacerHeight?: number;
 };
 
-const Bar = styled.header<{ $bg?: string; $sticky?: boolean }>`
+const Bar = styled.header<{ $bg?: string }>`
   height: 56px;
   display: flex;
   align-items: center;
-  padding: max(0px, env(safe-area-inset-top)) 20px 0 20px; /* top safe-area */
+  padding: 0;
   background: ${({ $bg }) => $bg ?? "transparent"};
-  ${({ $sticky }) => ($sticky ? "position: sticky; top: 0; z-index: 10;" : "")}
 `;
 
 const Left = styled.div`
@@ -58,20 +57,25 @@ const Navbar: React.FC<Props> = ({
   onBack,
   right,
   background,
-  sticky,
   className,
+  spacerHeight = 40,
 }) => {
   const goBack = () => (onBack ? onBack() : window.history.back());
   return (
-    <Bar className={className} $bg={background} $sticky={sticky}>
-      <Left>
-        <BackBtn aria-label="Back" onClick={goBack}>
-          <BackIcon />
-        </BackBtn>
-      </Left>
-      {title ? <Center>{title}</Center> : <div style={{ flex: 1 }} />}
-      <Right>{right}</Right>
-    </Bar>
+    <div style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+      {/* Transparent spacer above Navbar */}
+      <div style={{ height: `${spacerHeight}px`, }} />
+      
+      <Bar className={className} $bg={background}>
+        <Left>
+          <BackBtn aria-label="Back" onClick={goBack}>
+            <BackIcon />
+          </BackBtn>
+        </Left>
+        {title ? <Center>{title}</Center> : <div style={{ flex: 1 }} />}
+        <Right>{right}</Right>
+      </Bar>
+    </div>
   );
 };
 

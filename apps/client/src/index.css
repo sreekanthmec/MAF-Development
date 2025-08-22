@@ -3,6 +3,11 @@
   box-sizing: border-box;
 }
 
+/* Global top padding for all screens */
+body {
+  padding-top: max(40px, env(safe-area-inset-top)) !important;
+}
+
 html {
   margin: 0;
   padding: 0;

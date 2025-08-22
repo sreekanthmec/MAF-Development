@@ -130,7 +130,7 @@ export default function ExploreTrainers() {
 
   return (
     <div className="h-[100dvh] bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
-      <div className="mx-auto max-w-[400px] pt-[max(40px,env(safe-area-inset-top))]">
+      <div className="mx-auto max-w-[400px]">
         <Navbar 
           background="transparent"
           right={

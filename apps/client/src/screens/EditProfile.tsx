@@ -6,6 +6,7 @@ import LabeledInput from "../components/LabeledInput";
 import SegmentedGroup from "../components/SegmentedGroup";
 import ExperienceGrid from "../components/ExperienceGrid";
 import SizeGrid from "../components/SizeGrid";
+import PageTitle from "../components/PageTitle";
 
 export default function EditProfile() {
   const [name, setName] = useState("Ryuki");
@@ -19,12 +20,20 @@ export default function EditProfile() {
   const save = () => {/* call API */};
 
   return (
-    <div className="w-full bg-[#F7F7F7] min-h-[100dvh] pt-[max(12px,env(safe-area-inset-top))]">
-      <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
-        <Navbar />
+    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
+        {/* NAVBAR */}
+        <Navbar
+          onBack={() => window.history.back()}
+          background="transparent"
+          spacerHeight={40}
+        />
 
-        <div className="px-5 pt-4 pb-28">
-          <h1 className="font-manrope font-bold text-[20px] leading-[26px] mb-6">Edit Profile</h1>
+        {/* CONTENT */}
+        <main className="flex-1 px-5">
+          <div className="pt-4">
+            {/* TITLE */}
+            <PageTitle>Edit Profile</PageTitle>
 
           <LabeledInput
             label="YOUR NAME"
@@ -83,15 +92,14 @@ export default function EditProfile() {
             onChange={(v) => setHasHandwraps(v === "true")}
             size="md"
           />
-        </div>
 
-        {/* bottom button, centered and inside the shell */}
-        <div className="mt-auto w-full bg-white">
-          <div className="mx-auto max-w-[400px] px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+          {/* SAVE BUTTON AT BOTTOM OF SCROLLVIEW */}
+          <div className="pt-8 pb-[max(16px,env(safe-area-inset-bottom))]">
             <PrimaryButton label="SAVE CHANGES" onClick={save} className="!w-full" />
           </div>
         </div>
-      </div>
+      </main>
     </div>
+  </div>
   );
 }

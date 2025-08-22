@@ -12,7 +12,8 @@ const Screen = styled.div`
   min-height: 100dvh;
   width: 100%;
   background: #fff;
-  padding-top: max(12px, env(safe-area-inset-top));
+  padding-top: max(80px, env(safe-area-inset-top));
+  padding-bottom: max(80px, env(safe-area-inset-bottom));
 `;
 
 const Shell = styled.div`
@@ -122,8 +123,22 @@ const OtpVerification: React.FC<Props> = ({ role = "student" }) => {
   };
 
   return (
-    <Screen>
-      <Shell>
+    <div 
+      style={{
+        minHeight: '100dvh',
+        width: '100%',
+        background: '#fff'
+      }}
+    >
+      <div 
+        style={{
+          maxWidth: '400px',
+          margin: '0 auto',
+          minHeight: '100dvh',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
       <Navbar onBack={() => navigate(-1)} />
 
         {/* content (no scroll needed) */}
@@ -156,8 +171,8 @@ const OtpVerification: React.FC<Props> = ({ role = "student" }) => {
             className="!w-full"
           />
         </BottomBar>
-      </Shell>
-    </Screen>
+      </div>
+    </div>
   );
 };
 

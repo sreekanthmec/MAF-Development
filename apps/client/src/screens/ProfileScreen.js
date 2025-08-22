@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PrimaryButton, TertiaryButton } from "../components/Button";
-import BackIcon from "../components/BackIcon";
+import Navbar from "../components/Navbar";
 
-const ProfileScreen: React.FC = () => {
+const ProfileScreen = () => {
   const navigate = useNavigate();
 
   return (
@@ -13,12 +13,14 @@ const ProfileScreen: React.FC = () => {
 
         {/* Header (gradient) */}
         <header className="relative w-full bg-[linear-gradient(157.07deg,#3a3a3a_0%,#252525_81.65%)]">
-          <div className="px-5 pt-5 pb-6">
-            {/* back */}
-            <button type="button" onClick={() => navigate(-1)} aria-label="Back">
-              <BackIcon />
-            </button>
+          {/* NAVBAR INSIDE HEADER */}
+          <Navbar
+            onBack={() => navigate(-1)}
+            background="transparent"
+            // spacerHeight={40}
+          />
 
+          <div className="px-5 pb-6">
             {/* avatar + name */}
             <div className="mt-6 flex flex-col items-center">
               <div className="w-16 h-16 grid place-items-center bg-[#252525] border border-[#727272]">

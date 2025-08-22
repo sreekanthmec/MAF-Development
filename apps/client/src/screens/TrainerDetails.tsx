@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import ProfileHero from "../components/ProfileHero";
+import Navbar from "../components/Navbar";
 import TabBar from "../components/TabBar";
 import DaySelector from "../components/DaySelector";
 import { StatCard, TwoCol } from "../components/StatCard";
@@ -127,14 +127,46 @@ export default function TrainerDetails() {
       style={{ WebkitOverflowScrolling: "touch" }}
     >
       <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
-        {/* HERO */}
-        <ProfileHero
-          onBack={() => navigate(-1)}
-          name={trainer.name}
-          totalSessions={trainer.totalSessions}
-          creditsPerHour={trainer.creditsPerHour}
-          imageSrc={trainer.imageUrl || trainerImg}
-        />
+        {/* TRAINER HEADER */}
+        <div className="relative bg-gradient-to-br from-[#3a3a3a] to-[#252525] text-white">
+          {/* NAVBAR INSIDE HEADER */}
+          <Navbar
+            onBack={() => navigate(-1)}
+            background="transparent"
+            spacerHeight={40}
+          />
+
+          <div className="relative px-5 pb-7">
+            <div className="relative pr-28">
+              <h1 className="text-[#eb2726] font-extrabold text-2xl leading-tight tracking-tight italic mb-2">
+                {trainer.name.split(" ")[0]}
+              </h1>
+              {trainer.name.split(" ").slice(1).join(" ") && (
+                <h1 className="text-[#eb2726] font-extrabold text-2xl leading-tight tracking-tight italic mb-2">
+                  {trainer.name.split(" ").slice(1).join(" ")}
+                </h1>
+              )}
+              
+              <p className="text-[#e6e6e6] font-semibold text-sm mb-2">
+                <span className="font-extrabold">{trainer.totalSessions}</span> total sessions
+              </p>
+              
+              <div className="flex items-center gap-2 font-semibold text-sm">
+                <svg className="w-4 h-4 text-[#FFC800]" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                <span className="text-white">{trainer.creditsPerHour}</span>
+                <span className="text-[#B0B0B0]">credits per hour</span>
+              </div>
+            </div>
+            
+            <img 
+              src={trainer.imageUrl || trainerImg} 
+              alt={trainer.name}
+              className="absolute right-0 top-0 w-28 h-auto object-contain pointer-events-none select-none"
+            />
+          </div>
+        </div>
 
         {/* CONTENT */}
         <main className="flex-1 bg-white">

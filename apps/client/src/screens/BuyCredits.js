@@ -1,8 +1,10 @@
 // src/screens/BuyCredits.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackIcon from "../components/BackIcon";
+import Navbar from "../components/Navbar";
 import { PrimaryButton, TertiaryButton } from "../components/Button";
+import QuantitySelector from "../components/QuantitySelector";
+import PageTitle from "../components/PageTitle";
 
 /* small inline icon */
 const Bolt = ({ className = "" }) => (
@@ -130,65 +132,56 @@ export default function BuyCredits() {
   };
 
   return (
-    <div className="w-full bg-[#F7F7F7] min-h-[100dvh]">
-      {/* 400px app shell */}
-      <div className="mx-auto max-w-[400px] min-h-[100dvh] flex flex-col">
-        {/* Header */}
-        <header className="px-5 pt-4">
-          <button aria-label="Back" onClick={() => navigate(-1)} className="-ml-1">
-            <BackIcon />
-          </button>
-          <h1 className="text-[24px] font-extrabold mt-6">Buy Credits</h1>
-        </header>
+    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
+        {/* NAVBAR */}
+        <Navbar
+          onBack={() => navigate(-1)}
+          background="transparent"
+          spacerHeight={40}
+        />
 
-        {/* Content (scrollable) */}
-        <main className="px-5 flex-1 pb-28">
-          {/* stepper */}
-          <div className="mt-6 border border-[#DEDEDE] bg-white h-[48px] flex items-stretch">
-            <button
-              onClick={dec}
-              disabled={credits <= 1 || processing}
-              className="w-[56px] grid place-items-center disabled:opacity-40"
-            >
-              <div className="w-[32px] h-[24px] bg-[#F7B4B4] grid place-items-center">
-                <span className="text-[#EB2726] text-xl leading-none">−</span>
-              </div>
-            </button>
-            <div className="flex-1 grid place-items-center font-semibold">{credits}</div>
-            <button
-              onClick={inc}
-              disabled={processing}
-              className="w-[56px] grid place-items-center"
-            >
-              <div className="w-[32px] h-[24px] bg-[#EB2726] grid place-items-center">
-                <span className="text-white text-xl leading-none">+</span>
-              </div>
-            </button>
-          </div>
-
-          {/* quick picks */}
-          <div className="mt-4 grid grid-cols-4 gap-4">
-            {quickPicks.map((v) => (
-              <button
-                key={v}
-                onClick={() => setCredits(v)}
-                className={`h-[40px] bg-white border ${
-                  credits === v ? "border-black" : "border-[#DEDEDE]"
-                } grid place-items-center text-[14px]`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
-
-          {/* price banner */}
-          <div className="mt-5 bg-[#FFF6D9] border border-[#F5E6AB] px-4 py-3 flex items-center justify-between">
-            <Bolt />
-            <div className="text-[14px]">
-              <span className="text-[#616161] mr-2">1 Credit</span>
-              <span className="font-extrabold">${creditCost}</span>
+        {/* CONTENT */}
+        <main className="flex-1 px-5">
+          <div className="pt-4">
+            {/* TITLE */}
+            <PageTitle>Buy Credits</PageTitle>
+            
+            {/* QUANTITY SELECTOR */}
+            <div className="mt-6">
+              <QuantitySelector
+                value={credits}
+                onIncrement={inc}
+                onDecrement={dec}
+                min={1}
+                disabled={processing}
+              />
             </div>
-            <Bolt />
+
+            {/* quick picks */}
+            <div className="mt-4 grid grid-cols-4 gap-4">
+              {quickPicks.map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setCredits(v)}
+                  className={`h-[40px] bg-white border ${
+                    credits === v ? "border-black" : "border-[#DEDEDE]"
+                  } grid place-items-center text-[14px]`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            {/* price banner */}
+            <div className="mt-5 bg-[#FFF6D9] border border-[#F5E6AB] px-4 py-3 flex items-center justify-between">
+              <Bolt />
+              <div className="text-[14px]">
+                <span className="text-[#616161] mr-2">1 Credit</span>
+                <span className="font-extrabold">${creditCost}</span>
+              </div>
+              <Bolt />
+            </div>
           </div>
         </main>
 
@@ -207,23 +200,23 @@ export default function BuyCredits() {
             />
           </div>
         </footer>
-      </div>
-
-      {/* Result modal */}
-      <PaymentResultModal
-        open={result !== null}
-        type={result || "success"}
-        remainingCredits={remainingCredits}
-        onClose={() => setResult(null)}
-        onRetry={() => {
-          setResult(null);
-          handlePay();
-        }}
-        onBook={() => {
-          setResult(null);
-          navigate("/explore-trainers");
-        }}
-      />
     </div>
+
+    {/* Result modal */}
+    <PaymentResultModal
+      open={result !== null}
+      type={result || "success"}
+      remainingCredits={remainingCredits}
+      onClose={() => setResult(null)}
+      onRetry={() => {
+        setResult(null);
+        handlePay();
+      }}
+      onBook={() => {
+        setResult(null);
+        navigate("/explore-trainers");
+      }}
+    />
+  </div>
   );
 }
