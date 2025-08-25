@@ -56,6 +56,7 @@ import EditAvailability from "./screens/EditAvailability";
 import RoleSelection from "./components/RoleSelection";
 import ProtectedRoute from "./components/ProtectedRoute";
 import useViewportHeight from "./hooks/useViewportHeight";
+import { AuthProvider } from "./contexts/AuthContext";
 
 import "./index.css";
 
@@ -170,76 +171,78 @@ function App() {
   }, [pathname]);
 
   return (
-    <Elements stripe={stripePromise}>
-      <Routes>
-        {/* Everything below uses the same mobile shell */}
-        <Route element={<AppLayout />}>
-          {/* Role Selection */}
-          <Route path="/" element={<RoleSelection setUserRole={setUserRole} />} />
+    <AuthProvider>
+      <Elements stripe={stripePromise}>
+        <Routes>
+          {/* Everything below uses the same mobile shell */}
+          <Route element={<AppLayout />}>
+            {/* Role Selection */}
+            <Route path="/" element={<RoleSelection setUserRole={setUserRole} />} />
 
-          {/* Student Routes */}
-          <Route path="/student" element={<Login role="student" />} />
-          <Route path="/student/otp-verification" element={<OtpVerification role="student" />} />
-          <Route path="/student/home" element={<ProtectedRoute role="student"><Home /></ProtectedRoute>} />
-          <Route path="/student/basic-details1" element={<ProtectedRoute role="student"><BasicDetails1 /></ProtectedRoute>} />
-          <Route path="/student/basic-details2" element={<ProtectedRoute role="student"><BasicDetails2 /></ProtectedRoute>} />
-          <Route path="/student/session-history" element={<ProtectedRoute role="student"><SessionHistory /></ProtectedRoute>} />
-          <Route path="/student/session-details" element={<ProtectedRoute role="student"><StudentSessionDetails /></ProtectedRoute>} />
-          <Route path="/student/explore-trainers" element={<ProtectedRoute role="student"><ExploreTrainers /></ProtectedRoute>} />
-          <Route path="/student/my-trainers" element={<ProtectedRoute role="student"><MyTrainers /></ProtectedRoute>} />
-          <Route path="/student/all-trainers" element={<ProtectedRoute role="student"><AllTrainers /></ProtectedRoute>} />
-          <Route path="/student/trainers" element={<ProtectedRoute role="student"><Trainers /></ProtectedRoute>} />
-          <Route path="/student/trainer-details" element={<ProtectedRoute role="student"><TrainerDetails /></ProtectedRoute>} />
-          <Route path="/student/select-address" element={<ProtectedRoute role="student"><SelectAddress /></ProtectedRoute>} />
-          <Route path="/student/session-duration" element={<ProtectedRoute role="student"><SessionDuration /></ProtectedRoute>} />
-          <Route path="/student/buy-credits" element={<ProtectedRoute role="student"><BuyCredits /></ProtectedRoute>} />
-          <Route path="/student/set-location" element={<ProtectedRoute role="student"><SetLocation /></ProtectedRoute>} />
-          <Route path="/student/add-address" element={<ProtectedRoute role="student"><AddAddress /></ProtectedRoute>} />
-          <Route path="/student/credits" element={<ProtectedRoute role="student"><CreditsScreen /></ProtectedRoute>} />
-          <Route path="/student/profile" element={<ProtectedRoute role="student"><ProfileScreen /></ProtectedRoute>} />
-          <Route path="/student/edit-profile" element={<ProtectedRoute role="student"><EditProfileScreen /></ProtectedRoute>} />
-          <Route path="/student/saved-addresses" element={<ProtectedRoute role="student"><SavedAddressesScreen /></ProtectedRoute>} />
-          <Route path="/student/success" element={<Success />} />
-          <Route path="/student/failure" element={<Failure />} />
+            {/* Student Routes */}
+            <Route path="/student" element={<Login role="student" />} />
+            <Route path="/student/otp-verification" element={<OtpVerification role="student" />} />
+            <Route path="/student/home" element={<ProtectedRoute role="student"><Home /></ProtectedRoute>} />
+            <Route path="/student/basic-details1" element={<ProtectedRoute role="student"><BasicDetails1 /></ProtectedRoute>} />
+            <Route path="/student/basic-details2" element={<ProtectedRoute role="student"><BasicDetails2 /></ProtectedRoute>} />
+            <Route path="/student/session-history" element={<ProtectedRoute role="student"><SessionHistory /></ProtectedRoute>} />
+            <Route path="/student/session-details" element={<ProtectedRoute role="student"><StudentSessionDetails /></ProtectedRoute>} />
+            <Route path="/student/explore-trainers" element={<ProtectedRoute role="student"><ExploreTrainers /></ProtectedRoute>} />
+            <Route path="/student/my-trainers" element={<ProtectedRoute role="student"><MyTrainers /></ProtectedRoute>} />
+            <Route path="/student/all-trainers" element={<ProtectedRoute role="student"><AllTrainers /></ProtectedRoute>} />
+            <Route path="/student/trainers" element={<ProtectedRoute role="student"><Trainers /></ProtectedRoute>} />
+            <Route path="/student/trainer-details" element={<ProtectedRoute role="student"><TrainerDetails /></ProtectedRoute>} />
+            <Route path="/student/select-address" element={<ProtectedRoute role="student"><SelectAddress /></ProtectedRoute>} />
+            <Route path="/student/session-duration" element={<ProtectedRoute role="student"><SessionDuration /></ProtectedRoute>} />
+            <Route path="/student/buy-credits" element={<ProtectedRoute role="student"><BuyCredits /></ProtectedRoute>} />
+            <Route path="/student/set-location" element={<ProtectedRoute role="student"><SetLocation /></ProtectedRoute>} />
+            <Route path="/student/add-address" element={<ProtectedRoute role="student"><AddAddress /></ProtectedRoute>} />
+            <Route path="/student/credits" element={<ProtectedRoute role="student"><CreditsScreen /></ProtectedRoute>} />
+            <Route path="/student/profile" element={<ProtectedRoute role="student"><ProfileScreen /></ProtectedRoute>} />
+            <Route path="/student/edit-profile" element={<ProtectedRoute role="student"><EditProfileScreen /></ProtectedRoute>} />
+            <Route path="/student/saved-addresses" element={<ProtectedRoute role="student"><SavedAddressesScreen /></ProtectedRoute>} />
+            <Route path="/student/success" element={<Success />} />
+            <Route path="/student/failure" element={<Failure />} />
 
-          {/* Trainer Routes */}
-          <Route path="/trainer" element={<TrainerLogin role="trainer" />} />
-          <Route path="/trainer/dashboard" element={<ProtectedRoute role="trainer"><TrainerDashboard /></ProtectedRoute>} />
-          <Route path="/trainer/sessions" element={<ProtectedRoute role="trainer"><TrainerSessions /></ProtectedRoute>} />
-          <Route path="/trainer/session-details" element={<ProtectedRoute role="trainer"><TrainerSessionDetails /></ProtectedRoute>} />
-          <Route path="/trainer/edit-availability" element={<ProtectedRoute role="trainer"><TrainerEditAvailability /></ProtectedRoute>} />
-          <Route path="/trainer/profile" element={<ProtectedRoute role="trainer"><TrainerProfile /></ProtectedRoute>} />
-          <Route path="/trainer/edit-profile" element={<ProtectedRoute role="trainer"><TrainerEditProfile /></ProtectedRoute>} />
-          <Route path="/trainer/earnings" element={<ProtectedRoute role="trainer"><TrainerEarnings /></ProtectedRoute>} />
-          <Route path="/trainer/payment-info" element={<ProtectedRoute role="trainer"><TrainerPaymentInfo /></ProtectedRoute>} />
-          <Route path="/trainer/availability" element={<ProtectedRoute role="trainer"><TrainerAvailability /></ProtectedRoute>} />
-          <Route path="/trainer/students" element={<ProtectedRoute role="trainer"><TrainerStudents /></ProtectedRoute>} />
+            {/* Trainer Routes */}
+            <Route path="/trainer" element={<TrainerLogin role="trainer" />} />
+            <Route path="/trainer/dashboard" element={<ProtectedRoute role="trainer"><TrainerDashboard /></ProtectedRoute>} />
+            <Route path="/trainer/sessions" element={<ProtectedRoute role="trainer"><TrainerSessions /></ProtectedRoute>} />
+            <Route path="/trainer/session-details" element={<ProtectedRoute role="trainer"><TrainerSessionDetails /></ProtectedRoute>} />
+            <Route path="/trainer/edit-availability" element={<ProtectedRoute role="trainer"><TrainerEditAvailability /></ProtectedRoute>} />
+            <Route path="/trainer/profile" element={<ProtectedRoute role="trainer"><TrainerProfile /></ProtectedRoute>} />
+            <Route path="/trainer/edit-profile" element={<ProtectedRoute role="trainer"><TrainerEditProfile /></ProtectedRoute>} />
+            <Route path="/trainer/earnings" element={<ProtectedRoute role="trainer"><TrainerEarnings /></ProtectedRoute>} />
+            <Route path="/trainer/payment-info" element={<ProtectedRoute role="trainer"><TrainerPaymentInfo /></ProtectedRoute>} />
+            <Route path="/trainer/availability" element={<ProtectedRoute role="trainer"><TrainerAvailability /></ProtectedRoute>} />
+            <Route path="/trainer/students" element={<ProtectedRoute role="trainer"><TrainerStudents /></ProtectedRoute>} />
 
-          {/* Legacy redirects */}
-          <Route path="/login" element={<Navigate to="/student" replace />} />
-          <Route path="/trainer-login" element={<Navigate to="/trainer" replace />} />
-          <Route path="/trainer-dashboard" element={<Navigate to="/trainer/dashboard" replace />} />
-          <Route path="/all-sessions" element={<Navigate to="/trainer/all-sessions" replace />} />
-          <Route path="/session-details/:sessionId" element={<Navigate to="/trainer/session-details/:sessionId" replace />} />
-          <Route path="/edit-availability" element={<Navigate to="/trainer/edit-availability" replace />} />
-          <Route path="/session-history" element={<Navigate to="/student/session-history" replace />} />
-          <Route path="/explore-trainers" element={<Navigate to="/student/explore-trainers" replace />} />
-          <Route path="/trainers" element={<Navigate to="/student/trainers" replace />} />
-          <Route path="/trainer-details" element={<Navigate to="/student/trainer-details" replace />} />
-          <Route path="/select-address" element={<Navigate to="/student/select-address" replace />} />
-          <Route path="/session-duration" element={<Navigate to="/student/session-duration" replace />} />
-          <Route path="/buy-credits" element={<Navigate to="/student/buy-credits" replace />} />
-          <Route path="/set-location" element={<Navigate to="/student/set-location" replace />} />
-          <Route path="/add-address" element={<Navigate to="/student/add-address" replace />} />
-          <Route path="/credits" element={<Navigate to="/student/credits" replace />} />
-          <Route path="/profile" element={<Navigate to="/student/profile" replace />} />
-          <Route path="/edit-profile" element={<Navigate to="/student/edit-profile" replace />} />
-          <Route path="/saved-addresses" element={<Navigate to="/student/saved-addresses" replace />} />
-          <Route path="/success" element={<Navigate to="/student/success" replace />} />
-          <Route path="/failure" element={<Navigate to="/student/failure" replace />} />
-        </Route>
-      </Routes>
-    </Elements>
+            {/* Legacy redirects */}
+            <Route path="/login" element={<Navigate to="/student" replace />} />
+            <Route path="/trainer-login" element={<Navigate to="/trainer" replace />} />
+            <Route path="/trainer-dashboard" element={<Navigate to="/trainer/dashboard" replace />} />
+            <Route path="/all-sessions" element={<Navigate to="/trainer/all-sessions" replace />} />
+            <Route path="/session-details/:sessionId" element={<Navigate to="/trainer/session-details/:sessionId" replace />} />
+            <Route path="/edit-availability" element={<Navigate to="/trainer/edit-availability" replace />} />
+            <Route path="/session-history" element={<Navigate to="/student/session-history" replace />} />
+            <Route path="/explore-trainers" element={<Navigate to="/student/explore-trainers" replace />} />
+            <Route path="/trainers" element={<Navigate to="/student/trainers" replace />} />
+            <Route path="/trainer-details" element={<Navigate to="/student/trainer-details" replace />} />
+            <Route path="/select-address" element={<Navigate to="/student/select-address" replace />} />
+            <Route path="/session-duration" element={<Navigate to="/student/session-duration" replace />} />
+            <Route path="/buy-credits" element={<Navigate to="/student/buy-credits" replace />} />
+            <Route path="/set-location" element={<Navigate to="/student/set-location" replace />} />
+            <Route path="/add-address" element={<Navigate to="/student/add-address" replace />} />
+            <Route path="/credits" element={<Navigate to="/student/credits" replace />} />
+            <Route path="/profile" element={<Navigate to="/student/profile" replace />} />
+            <Route path="/edit-profile" element={<Navigate to="/student/edit-profile" replace />} />
+            <Route path="/saved-addresses" element={<Navigate to="/student/saved-addresses" replace />} />
+            <Route path="/success" element={<Navigate to="/student/success" replace />} />
+            <Route path="/failure" element={<Navigate to="/student/failure" replace />} />
+          </Route>
+        </Routes>
+      </Elements>
+    </AuthProvider>
   );
 }
 

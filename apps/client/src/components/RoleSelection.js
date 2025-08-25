@@ -24,16 +24,10 @@ const LogoText = styled.div`
   color: #B0B0B0;
 `;
 
-type Props = {
-  setUserRole?: (role: "student" | "trainer") => void; // optional now
-};
-
-const RoleSelection: React.FC<Props> = ({ setUserRole }) => {
+const RoleSelection = () => {
   const navigate = useNavigate();
 
-  const handleRoleSelect = (role: "student" | "trainer") => {
-    // call only if provided
-    if (typeof setUserRole === "function") setUserRole(role);
+  const handleRoleSelect = (role) => {
     localStorage.setItem("userRole", role);
     navigate(`/${role}`);
   };

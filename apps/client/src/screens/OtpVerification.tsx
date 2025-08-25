@@ -6,6 +6,7 @@ import { PrimaryButton } from "../components/Button";
 import OtpView from "../components/OtpView";
 import { validateOtp } from "../services/api";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../contexts/AuthContext";
 
 /* —— styled —— */
 const Screen = styled.div`
@@ -78,6 +79,7 @@ interface Props {
 /* —— component —— */
 const OtpVerification: React.FC<Props> = ({ role = "student" }) => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const loc = useLocation();
   const { countryCode, mobileNumber, role: stateRole } =
     ((loc.state as LocationState) || {}) as LocationState;
@@ -110,8 +112,17 @@ const OtpVerification: React.FC<Props> = ({ role = "student" }) => {
     }
     setLoading(true);
     try {
-      await validateOtp(countryCode, mobileNumber, code, currentRole);
-      localStorage.setItem("userRole", currentRole);
+      const response = await validateOtp(countryCode, mobileNumber, code, currentRole);
+      
+      // Login user using AuthContext
+      login({
+        role: currentRole,
+        accessToken: response.accessToken || "dummy-token", // Replace with actual token from API
+        countryCode,
+        mobileNumber
+      });
+      
+      // Navigate to appropriate screen based on role
       navigate(
         currentRole === "student" ? "/student/basic-details1" : "/trainer/dashboard"
       );

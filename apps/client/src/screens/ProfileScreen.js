@@ -2,9 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PrimaryButton, TertiaryButton } from "../components/Button";
 import Navbar from "../components/Navbar";
+import { useAuth } from "../contexts/AuthContext";
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   return (
     // single viewport scroller + 400px shell
@@ -68,7 +70,10 @@ const ProfileScreen = () => {
             <TertiaryButton
               label="LOGOUT"
               layout="split"
-              onClick={() => alert("Logging out...")}
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
               className="!w-full"
             />
           </div>

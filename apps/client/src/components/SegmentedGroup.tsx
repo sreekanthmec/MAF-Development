@@ -19,7 +19,7 @@ export default function SegmentedGroup({
   className = "",
 }: Props) {
   const cell = (selected: boolean) =>
-    `${size === "sm" ? "w-[72px]" : "w-[154px]"} h-12 grid place-items-center border bg-white ${
+    `${size === "sm" ? "w-[72px]" : "w-[154px]"} h-8 grid place-items-center border bg-white ${
       selected ? "border-[#D62422]" : "border-[#B1B1B1]"
     }`;
 

@@ -1,102 +1,130 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  TextInput,
-  SingleInput,
-  Dropdown,
-} from "../components/InputComponents";
-import BackIcon from "../components/BackIcon";
+import Navbar from "../components/Navbar";
+import PageTitle from "../components/PageTitle";
+import { PrimaryButton } from "../components/Button";
+import LabeledInput from "../components/LabeledInput";
+import SegmentedGroup from "../components/SegmentedGroup";
+import AddressTypeBottomSheet from "../components/AddressTypeBottomSheet";
 
 const AddAddress = () => {
   const [name, setName] = useState("");
-  const [addressCategory, setAddressCategory] = useState("Home");
   const [addressType, setAddressType] = useState("");
-  const [showAddressTypeSheet, setShowAddressTypeSheet] = useState(false);
   const [flatDetails, setFlatDetails] = useState("");
   const [landmark, setLandmark] = useState("");
+  const [showAddressTypeSheet, setShowAddressTypeSheet] = useState(false);
   const navigate = useNavigate();
 
   const handleSaveAddress = () => {
-    navigate("/select-address");
+    navigate("/student/saved-addresses");
   };
 
-  const addressTypeOptions = [
-    "Public Property",
-    "Park",
-    "My own house",
-    "Friends house",
-    "Hotel",
-    "Others",
-  ];
+  const handleAddressTypeSelect = (type) => {
+    setAddressType(type);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <header className="flex justify-between items-center mb-4">
-        <BackIcon />
-      </header>
+    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      
+      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
+        {/* NAVBAR */}
+        <Navbar
+          onBack={() => navigate(-1)}
+          background="transparent"
+          spacerHeight={40}
+        />
 
-      <section>
-        <h1 className="text-2xl font-bold mb-6">Add Address</h1>
-        <TextInput
-          label="Name of Address"
-          placeholder="Enter name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <SingleInput
-          label="Address Category"
-          options={["Home", "Gym", "Park"]}
-          selected={addressCategory}
-          onSelect={(category) => setAddressCategory(category)}
-        />
-        <Dropdown
-          label="Address Type"
-          placeholder="Select Address Type"
-          value={addressType}
-          onClick={() => setShowAddressTypeSheet(!showAddressTypeSheet)}
-          options={addressTypeOptions}
-          showDropdown={showAddressTypeSheet}
-          onSelect={(type) => {
-            setAddressType(type);
-            setShowAddressTypeSheet(false);
-          }}
-        />
-        <TextInput
-          label="Flat / House no / Floor / Building"
-          placeholder="Enter details"
-          value={flatDetails}
-          onChange={(e) => setFlatDetails(e.target.value)}
-        />
-        <TextInput
-          label="Nearby Landmark"
-          placeholder="Enter landmark"
-          value={landmark}
-          onChange={(e) => setLandmark(e.target.value)}
-        />
-      </section>
+        {/* CONTENT */}
+        <main className="flex-1 bg-transparent px-5">
+          <div className="pt-4">
+            {/* TITLE */}
+            <PageTitle>Add Address</PageTitle>
 
-      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
-        <button
-          onClick={handleSaveAddress}
-          className="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-md flex items-center justify-center focus:outline-none"
-        >
-          Save Address
-          <svg
-            className="w-5 h-5 ml-2 -mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 5l7 7-7 7"
-            ></path>
-          </svg>
-        </button>
-      </footer>
+            {/* NAME OF ADDRESS */}
+            <div className="mb-2">
+              <LabeledInput
+                label="Name of Address"
+                placeholder="Name of Address"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            {/* ADDRESS TYPE TAGS */}
+            <div className="mb-6">
+              <SegmentedGroup
+                label=""
+                options={[
+                  { label: "Home", value: "home" },
+                  { label: "Gym", value: "gym" },
+                  { label: "Park", value: "park" }
+                ]}
+                value={addressType}
+                onChange={(value) => setAddressType(value)}
+                size="sm"
+              />
+            </div>
+
+
+            {/* ADDRESS TYPE DROPDOWN */}
+            <div className="mb-6">
+              <div 
+                className="w-full p-3 border border-[#B1B1B1] bg-white text-gray-800 cursor-pointer flex items-center justify-between"
+                onClick={() => setShowAddressTypeSheet(true)}
+              >
+                <span className={addressType ? "text-gray-800" : "text-gray-500"}>
+                  {addressType || "Address type"}
+                </span>
+                <svg 
+                  className="w-5 h-5 text-gray-400" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* FLAT/HOUSE DETAILS */}
+            <div className="mb-6">
+              <LabeledInput
+                label=""
+                placeholder="Flat / House no / Floor / Building"
+                value={flatDetails}
+                onChange={(e) => setFlatDetails(e.target.value)}
+              />
+            </div>
+
+            {/* NEARBY LANDMARK */}
+            <div className="mb-8">
+              <LabeledInput
+                label=""
+                placeholder="Nearby Landmark"
+                value={landmark}
+                onChange={(e) => setLandmark(e.target.value)}
+              />
+            </div>
+
+            {/* SAVE ADDRESS BUTTON */}
+            <div className="pb-[max(16px,env(safe-area-inset-bottom))]">
+              <PrimaryButton
+                label="SAVE ADDRESS"
+                onClick={handleSaveAddress}
+                className="!w-full"
+              />
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {/* ADDRESS TYPE BOTTOM SHEET */}
+      <AddressTypeBottomSheet
+        isOpen={showAddressTypeSheet}
+        onClose={() => setShowAddressTypeSheet(false)}
+        onSelect={handleAddressTypeSelect}
+        selectedValue={addressType}
+      />
     </div>
   );
 };

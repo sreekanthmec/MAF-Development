@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PrimaryButton } from "../components/Button"; // Assuming you have this button component
-import BackIcon from "../components/BackIcon";
+import { PrimaryButton } from "../components/Button";
+import Navbar from "../components/Navbar";
+import PageTitle from "../components/PageTitle";
 
 const SavedAddressesScreen = () => {
   const navigate = useNavigate();
@@ -21,42 +22,57 @@ const SavedAddressesScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <header className="flex justify-between items-center mb-4">
-        <BackIcon />
-      </header>
-
-      <section>
-        <h1 className="text-2xl font-bold mb-6">Saved Addresses</h1>
-
-        <div className="space-y-4 mb-8">
-          {addresses.map((item, index) => (
-            <div key={index} className="p-4 border rounded-md bg-white">
-              <p className="text-lg font-bold text-black">{item.label}</p>
-              <p className="text-gray-500 mb-2">{item.address}</p>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => handleEdit(item.label)}
-                  className="text-red-600 font-bold"
-                >
-                  EDIT
-                </button>
-                <button
-                  onClick={() => handleDelete(item.label)}
-                  className="text-red-600 font-bold"
-                >
-                  DELETE
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <PrimaryButton
-          label="ADD NEW ADDRESS"
-          onClick={() => navigate("/set-location")}
+    <div className="h-[100dvh] w-full bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
+      
+      <div className="mx-auto max-w-[400px] min-h-full flex flex-col">
+        {/* NAVBAR */}
+        <Navbar
+          onBack={() => navigate(-1)}
+          background="transparent"
+          spacerHeight={40}
         />
-      </section>
+
+        {/* CONTENT */}
+        <main className="flex-1 bg-transparent px-5">
+          <div className="pt-4">
+            {/* TITLE */}
+            <PageTitle>Saved Addresses</PageTitle>
+
+            {/* ADDRESS CARDS */}
+            <div className="space-y-4 mb-8">
+              {addresses.map((item, index) => (
+                <div key={index} className="p-4 bg-[#F5F5F5] rounded-lg">
+                  <p className="text-lg font-bold text-black mb-2">{item.label}</p>
+                  <p className="text-gray-600 mb-3">{item.address}</p>
+                  <div className="flex space-x-6">
+                    <button
+                      onClick={() => handleEdit(item.label)}
+                      className="text-[#EB2726] font-bold text-sm"
+                    >
+                      EDIT
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.label)}
+                      className="text-[#EB2726] font-bold text-sm"
+                    >
+                      DELETE
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ADD NEW ADDRESS BUTTON */}
+            <div className="pb-[max(16px,env(safe-area-inset-bottom))]">
+              <PrimaryButton
+                label="ADD NEW ADDRESS"
+                onClick={() => navigate("/student/set-location")}
+                className="!w-full"
+              />
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
