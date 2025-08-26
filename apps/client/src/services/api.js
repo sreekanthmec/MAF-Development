@@ -181,4 +181,43 @@ if (accessToken && !checkTokenExpiry(accessToken)) {
   api.defaults.headers.common["Authorization"] = `${accessToken}`; // Use token without Bearer
 }
 
+// Payment-related functions
+export const createPaymentIntent = async (amount, credits) => {
+  try {
+    const response = await api.post("/payments/create-intent", {
+      amount,
+      credits,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating payment intent:", error);
+    throw error;
+  }
+};
+
+export const confirmPayment = async (paymentIntentId, paymentMethodId) => {
+  try {
+    const response = await api.post("/payments/confirm", {
+      paymentIntentId,
+      paymentMethodId,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error confirming payment:", error);
+    throw error;
+  }
+};
+
+export const addCreditsToUser = async (credits) => {
+  try {
+    const response = await api.post("/user/add-credits", {
+      credits,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding credits:", error);
+    throw error;
+  }
+};
+
 export default api;

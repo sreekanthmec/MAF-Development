@@ -1,10 +1,13 @@
 // src/screens/BuyCredits.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStripe, useElements } from "@stripe/react-stripe-js";
 import Navbar from "../components/Navbar";
 import { PrimaryButton, TertiaryButton } from "../components/Button";
 import QuantitySelector from "../components/QuantitySelector";
 import PageTitle from "../components/PageTitle";
+import StripePaymentForm from "../components/StripePaymentForm";
+import { createPaymentIntent, confirmPayment, addCreditsToUser } from "../services/api";
 
 /* small inline icon */
 const Bolt = ({ className = "" }) => (
@@ -97,6 +100,8 @@ function PaymentResultModal({
 
 export default function BuyCredits() {
   const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
 
   // UI state
   const [credits, setCredits] = useState(10);
@@ -109,6 +114,8 @@ export default function BuyCredits() {
   // modal state
   const [result, setResult] = useState(null); // "success" | "failure" | null
   const [processing, setProcessing] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
 
   const quickPicks = [20, 50, 100, 250];
 
@@ -116,19 +123,43 @@ export default function BuyCredits() {
   const inc = () => setCredits((c) => c + 1);
 
   const handlePay = async () => {
-    setProcessing(true);
+    if (!stripe || !elements) {
+      setPaymentError("Stripe is not loaded. Please refresh the page.");
+      return;
+    }
 
-    // simulate a short processing delay then randomly show success/failure
-    setTimeout(() => {
-      const ok = Math.random() > 0.5;
-      if (ok) {
-        setRemainingCredits((prev) => prev + credits);
-        setResult("success");
-      } else {
-        setResult("failure");
-      }
-      setProcessing(false);
-    }, 700);
+    setShowPaymentForm(true);
+    setPaymentError(null);
+  };
+
+  const handlePaymentSuccess = async (paymentResult) => {
+    try {
+      // In a real implementation, you would:
+      // 1. Send paymentResult.paymentMethodId to your server
+      // 2. Create a payment intent on your server
+      // 3. Confirm the payment
+      // 4. Add credits to the user's account
+
+      // For now, we'll simulate the success flow
+      console.log("Payment successful:", paymentResult);
+      
+      // Simulate adding credits to user account
+      // await addCreditsToUser(credits);
+      
+      setRemainingCredits((prev) => prev + credits);
+      setResult("success");
+      setShowPaymentForm(false);
+    } catch (error) {
+      console.error("Error processing payment success:", error);
+      setPaymentError("Failed to process payment. Please try again.");
+    }
+  };
+
+  const handlePaymentError = (error) => {
+    console.error("Payment error:", error);
+    setPaymentError(error);
+    setResult("failure");
+    setShowPaymentForm(false);
   };
 
   return (
@@ -193,7 +224,7 @@ export default function BuyCredits() {
               <span className="font-extrabold text-[16px]">${totalCost}</span>
             </div>
             <PrimaryButton
-              label={processing ? "PROCESSING..." : "PAY"}
+              label="PAY"
               onClick={handlePay}
               disabled={processing}
               className="!w-full"
@@ -201,6 +232,61 @@ export default function BuyCredits() {
           </div>
         </footer>
     </div>
+
+    {/* Payment Form Modal */}
+    {showPaymentForm && (
+      <div className="fixed inset-0 z-[100] bg-black/40 grid place-items-center px-5">
+        <div className="w-full max-w-[400px] bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Payment Details</h2>
+            <button
+              onClick={() => setShowPaymentForm(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <div className="mb-4">
+            <div className="bg-gray-50 p-4 rounded">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600">Credits:</span>
+                <span className="font-semibold">{credits}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Total Amount:</span>
+                <span className="font-bold text-lg">${totalCost}</span>
+              </div>
+            </div>
+          </div>
+
+          {paymentError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+              {paymentError}
+            </div>
+          )}
+
+          <StripePaymentForm
+            amount={totalCost}
+            credits={credits}
+            onSuccess={handlePaymentSuccess}
+            onError={handlePaymentError}
+            processing={processing}
+            setProcessing={setProcessing}
+          />
+
+          <div className="mt-4 text-xs text-gray-500 text-center">
+            <p className="font-semibold mb-2">Test Cards:</p>
+            <p>✅ Success: 4242 4242 4242 4242</p>
+            <p>❌ Declined: 4000 0000 0000 0002</p>
+            <p>❌ Insufficient: 4000 0000 0000 9999</p>
+            <p className="mt-2">Expiry: Any future date | CVC: Any 3 digits</p>
+          </div>
+        </div>
+      </div>
+    )}
 
     {/* Result modal */}
     <PaymentResultModal

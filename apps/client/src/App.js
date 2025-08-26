@@ -120,7 +120,8 @@ function AppLayout() {
 }
 
 const stripePromise = loadStripe(
-  "pk_live_51PpktVDR2pvMyQSxRdkf40Llbz6F3crrn6YulljLEzLeMeE0cns4BFWSqCPlLQ73vzypSfTvse4f1PVp0L4e3Rgy00vpPhb5pX"
+  // Use test key for development - replace with live key for production
+  "pk_test_51PpktVDR2pvMyQSx1nuDphfPYavVb5gH06T3bHMjQdwCUECtN2f6TSXjknsR9wZBrBn3GV4XzHOhSZDebg0dbAfO00mSx8xUcg"
 );
 
 function App() {
