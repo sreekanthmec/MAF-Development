@@ -25,7 +25,10 @@ export const AuthProvider = ({ children }) => {
       const accessToken = localStorage.getItem('accessToken');
       const userRole = localStorage.getItem('userRole');
 
+      console.log('Auth check - accessToken:', !!accessToken, 'userRole:', userRole);
+
       if (!accessToken || !userRole) {
+        console.log('Auth check - missing token or role, setting user to null');
         setUser(null);
         setLoading(false);
         return;
@@ -48,6 +51,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // User is authenticated
+      console.log('Auth check - user authenticated successfully');
       setUser({
         role: userRole,
         accessToken,
@@ -55,6 +59,7 @@ export const AuthProvider = ({ children }) => {
       });
     } catch (error) {
       console.error('Auth check failed:', error);
+      // In production, if token decoding fails, clear everything and start fresh
       logout();
     } finally {
       setLoading(false);
@@ -77,11 +82,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = () => {
-    return user !== null;
+    return user !== null && user.role && user.accessToken;
   };
 
   const hasRole = (role) => {
-    return user && user.role === role;
+    return user && user.role && user.role === role;
   };
 
   const value = {

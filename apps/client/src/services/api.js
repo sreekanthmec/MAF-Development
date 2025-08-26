@@ -59,6 +59,7 @@ export const trainerLogin = async (email, password) => {
       password,
     });
     localStorage.setItem("accessToken", response.data.accessToken); // Store the access token
+    localStorage.setItem("userRole", "trainer"); // Set the user role for trainer
     return response.data;
   } catch (error) {
     console.error("Error trainer login:", error);
@@ -99,18 +100,36 @@ export const refreshToken = async () => {
 
 // Function to decode a JWT
 export const decodeJwt = (token) => {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map((c) => {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
+  try {
+    if (!token || typeof token !== 'string') {
+      throw new Error('Invalid token');
+    }
+    
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      throw new Error('Invalid token format');
+    }
+    
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
 
-  return JSON.parse(jsonPayload);
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('JWT decode error:', error);
+    // Return a default structure to prevent crashes
+    return {
+      exp: 0,
+      role: null
+    };
+  }
 };
 
 // Function to check token expiry

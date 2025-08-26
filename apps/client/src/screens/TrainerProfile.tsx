@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Zap, Play } from "lucide-react";
 import { PrimaryButton } from "../components/Button";
 import trainerImg from "../assets/trainer.png";
 import trainerPlaceholder from "../assets/image-trainer.png";
+import { useAuth } from "../contexts/AuthContext";
 
 /* ——— shared layout like Trainer Dashboard ——— */
 const PageScroller = styled.div`
@@ -147,6 +148,7 @@ const media: MediaItem[] = [
 
 export default function TrainerProfile() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [tab, setTab] = useState<Tab>("about");
 
   const profile = {
@@ -159,7 +161,7 @@ export default function TrainerProfile() {
 
   const goSetting = (id: SettingId) => {
     if (id === "logout") {
-      localStorage.clear();
+      logout();
       navigate("/");
     } else if (id === "earnings") navigate("/trainer/earnings");
     else if (id === "payment") navigate("/trainer/payment-info");

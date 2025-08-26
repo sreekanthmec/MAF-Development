@@ -149,7 +149,7 @@ export default function ExploreTrainers() {
             <div className="flex gap-4">
               <button 
                 onClick={() => navigate("/student/my-trainers")}
-                className="flex flex-col justify-between items-start p-4 pb-3 gap-4 w-[152px] h-[88px] border-2 border-[#D62422] bg-white"
+                className="flex flex-col justify-between items-start p-4 pb-3 gap-4 w-[152px] h-[88px] border-2 border-[#B1B1B1] bg-white"
               >
                 <div className="w-6 h-6 text-[#D62422]">
                   <Heart className="w-6 h-6" />

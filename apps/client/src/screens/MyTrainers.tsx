@@ -113,6 +113,7 @@ export default function MyTrainers() {
     <div className="h-[100dvh] bg-[#F7F7F7] overflow-y-auto" style={{ WebkitOverflowScrolling: "touch" }}>
       <div className="mx-auto max-w-[400px] pt-[max(12px,env(safe-area-inset-top))]">
         <Navbar 
+          onBack={() => navigate("/student/explore-trainers")}
           background="transparent"
           right={
             <CreditsBalance 

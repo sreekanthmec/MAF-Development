@@ -22,16 +22,6 @@ const AuthRedirect = ({ children, requireAuth = false, allowedRoles = [] }) => {
     return <Navigate to="/" replace />;
   }
 
-  // If user is authenticated but trying to access login/role selection
-  if (isAuthenticated() && !requireAuth) {
-    // Redirect to appropriate dashboard based on role
-    if (hasRole('student')) {
-      return <Navigate to="/student/home" replace />;
-    } else if (hasRole('trainer')) {
-      return <Navigate to="/trainer/dashboard" replace />;
-    }
-  }
-
   // If specific roles are required, check if user has the required role
   if (allowedRoles.length > 0 && !allowedRoles.some(role => hasRole(role))) {
     // Redirect to appropriate dashboard based on user's actual role
@@ -42,6 +32,15 @@ const AuthRedirect = ({ children, requireAuth = false, allowedRoles = [] }) => {
     }
     // If no valid role, redirect to role selection
     return <Navigate to="/" replace />;
+  }
+
+  // If user is authenticated but doesn't have the required role, redirect to appropriate dashboard
+  if (isAuthenticated() && allowedRoles.length > 0 && !allowedRoles.some(role => hasRole(role))) {
+    if (hasRole('student')) {
+      return <Navigate to="/student/home" replace />;
+    } else if (hasRole('trainer')) {
+      return <Navigate to="/trainer/dashboard" replace />;
+    }
   }
 
   return children;

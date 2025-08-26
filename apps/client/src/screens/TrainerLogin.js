@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import { trainerLogin } from "../services/api";
 import { PrimaryButton } from "../components/Button";
 import { TextInput } from "../components/InputComponents";
+import { useAuth } from "../contexts/AuthContext";
 
 /* ---------- constants ---------- */
 const APP_WIDTH = 400;         // canonical mobile width (px)
@@ -202,6 +203,18 @@ const TrainerLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { isAuthenticated, hasRole, login } = useAuth();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated()) {
+      if (hasRole('student')) {
+        navigate('/student/home', { replace: true });
+      } else if (hasRole('trainer')) {
+        navigate('/trainer/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, hasRole, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -219,8 +232,14 @@ const TrainerLogin = () => {
 
     try {
       const response = await trainerLogin(trimmedEmail, trimmedPassword);
-      localStorage.setItem("accessToken", response.accessToken);
-      localStorage.setItem("userRole", "trainer");
+      
+      // Login user using AuthContext
+      login({
+        role: "trainer",
+        accessToken: response.accessToken || "dummy-token",
+        email: trimmedEmail
+      });
+      
       navigate("/trainer/dashboard");
     } catch (err) {
       setError("Invalid email or password");
@@ -228,6 +247,26 @@ const TrainerLogin = () => {
       setLoading(false);
     }
   };
+
+  // Handle back button press
+  useEffect(() => {
+    const handleBackButton = (e) => {
+      if (isAuthenticated()) {
+        if (hasRole('student')) {
+          navigate('/student/home', { replace: true });
+        } else if (hasRole('trainer')) {
+          navigate('/trainer/dashboard', { replace: true });
+        }
+      }
+    };
+
+    // Listen for popstate (back button)
+    window.addEventListener('popstate', handleBackButton);
+    
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [isAuthenticated, hasRole, navigate]);
 
   const handleContactUs = () => {
     window.location.href = "mailto:support@maf.com?subject=Trainer%20Sign%20Up";
