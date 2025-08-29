@@ -29,15 +29,57 @@ const Login = ({ role = "student" }) => {
   const navigate = useNavigate();
   const { isAuthenticated, hasRole } = useAuth();
 
-  // Redirect to home if already authenticated
+  // Reload page after 1 second when component mounts (only first time)
   useEffect(() => {
-    if (isAuthenticated()) {
-      if (hasRole('student')) {
-        navigate('/student/home', { replace: true });
-      } else if (hasRole('trainer')) {
-        navigate('/trainer/dashboard', { replace: true });
-      }
+    console.log('Login useEffect running...');
+    
+    // Clear any old format data first
+    const oldValue = sessionStorage.getItem('loginPageReloaded');
+    if (oldValue === 'true') {
+      console.log('Clearing old format data...');
+      sessionStorage.removeItem('loginPageReloaded');
     }
+    
+    // Check if we've already reloaded in this session using timestamp
+    const lastReloadTime = sessionStorage.getItem('loginPageReloaded');
+    const currentTime = Date.now();
+    const oneMinuteAgo = currentTime - (60 * 1000); // 1 minute ago
+    
+    console.log('Last reload time:', lastReloadTime);
+    console.log('Current time:', currentTime);
+    console.log('One minute ago:', oneMinuteAgo);
+    
+    // If no reload time or reload was more than 1 minute ago, reload
+    if (!lastReloadTime || parseInt(lastReloadTime) < oneMinuteAgo) {
+      console.log('Setting up reload timer...');
+      const timer = setTimeout(() => {
+        console.log('Executing reload...');
+        sessionStorage.setItem('loginPageReloaded', currentTime.toString());
+        window.location.reload();
+      }, 1000);
+
+      return () => {
+        console.log('Cleaning up timer...');
+        clearTimeout(timer);
+      };
+    } else {
+      console.log('Already reloaded recently, skipping...');
+    }
+  }, []);
+
+  // Redirect to home if already authenticated (with delay to allow reload to happen first)
+  useEffect(() => {
+    const redirectTimer = setTimeout(() => {
+      if (isAuthenticated()) {
+        if (hasRole('student')) {
+          navigate('/student/home', { replace: true });
+        } else if (hasRole('trainer')) {
+          navigate('/trainer/dashboard', { replace: true });
+        }
+      }
+    }, 1500); // Wait 1.5 seconds to allow reload to happen first
+
+    return () => clearTimeout(redirectTimer);
   }, [isAuthenticated, hasRole, navigate]);
 
   const validatePhoneNumber = (number) => {
@@ -92,6 +134,8 @@ const Login = ({ role = "student" }) => {
       window.removeEventListener('popstate', handleBackButton);
     };
   }, [isAuthenticated, hasRole, navigate]);
+
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-white">
