@@ -4,7 +4,7 @@ Unified Trainer and Student App for Martial Arts Federation
 
 ## 🚀 Quick Deployment Guide
 
-### Free Deployment Options
+### Free Deployment Options - changed account
 
 This project can be deployed for free using the following services:
 
