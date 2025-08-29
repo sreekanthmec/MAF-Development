@@ -50,7 +50,7 @@ try {
   const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
       ? [
-          'https://energetic-grace-production.up.railway.app',
+          'https://maf-backend-production-5619.up.railway.app',
           'http://localhost:3000',
           'http://localhost:3001'
         ]

@@ -15,7 +15,7 @@ console.log('✅ Basic middleware configured');
 // CORS setup
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://energetic-grace-production.up.railway.app', 'http://localhost:3000']
+    ? ['https://maf-backend-production-5619.up.railway.app', 'http://localhost:3000']
     : ['http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

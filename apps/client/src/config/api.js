@@ -5,7 +5,7 @@ const API_CONFIG = {
     timeout: 10000,
   },
   production: {
-    baseURL: "https://energetic-grace-production.up.railway.app/api",
+    baseURL: "https://maf-backend-production-5619.up.railway.app/api",
     timeout: 15000, // Longer timeout for production
   },
 };

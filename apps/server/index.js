@@ -13,7 +13,7 @@ console.log('🌍 Setting up CORS...');
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        'https://energetic-grace-production.up.railway.app',
+        'https://maf-backend-production-5619.up.railway.app',
         'https://your-client-domain.com', // Replace with your actual client domain
         'http://localhost:3000', // Keep localhost for development
         'http://localhost:3001'
