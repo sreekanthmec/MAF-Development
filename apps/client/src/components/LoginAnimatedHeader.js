@@ -56,7 +56,7 @@ const fastInSlowStayFastOutImage = keyframes`
 
 const Logo = styled.div`
   position: absolute;
-  top: 5%;
+  top: 10%;
   left: 10%;
   font-family: "Racing Sans One", sans-serif;
   font-size: 24px;
@@ -68,7 +68,7 @@ const Logo = styled.div`
 const MainTextContainer = styled.div`
   position: absolute;
   left: 10%;
-  top: 20%;
+  top: 25%;
   z-index: 2;
 `;
 
